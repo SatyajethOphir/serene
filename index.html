@@ -1,0 +1,1590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f0ebe3">
+<title>Serene — Your Mindful Companion</title>
+<link rel="manifest" href="#" />
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f3ee;
+    --bg2: #eee8df;
+    --bg3: #e5ddd2;
+    --surface: #faf8f5;
+    --surface2: #f2ece4;
+    --text: #2d2420;
+    --text2: #6b5d56;
+    --text3: #9e8f87;
+    --accent: #7c9e8f;
+    --accent2: #a8c5b5;
+    --accent3: #d4e8de;
+    --warm: #c4826a;
+    --warm2: #e8c4b4;
+    --warm3: #f5e8e0;
+    --gold: #c49a4f;
+    --gold2: #e8d5a8;
+    --gold3: #f8f0dc;
+    --border: rgba(100,80,60,0.12);
+    --border2: rgba(100,80,60,0.2);
+    --shadow: 0 2px 24px rgba(60,40,20,0.08);
+    --shadow2: 0 8px 40px rgba(60,40,20,0.12);
+    --r: 16px;
+    --r2: 24px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(247,243,238,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 60px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-brand {
+    font-family: 'Lora', serif;
+    font-size: 20px; font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.3px;
+  }
+  .nav-brand span { color: var(--accent); }
+  .nav-tabs {
+    display: flex; gap: 4px;
+  }
+  .nav-tab {
+    padding: 6px 14px; border-radius: 20px;
+    font-size: 13px; font-weight: 500;
+    cursor: pointer; border: none;
+    background: transparent; color: var(--text2);
+    transition: all 0.2s;
+  }
+  .nav-tab:hover { background: var(--bg2); color: var(--text); }
+  .nav-tab.active { background: var(--accent); color: white; }
+  .nav-right { display: flex; align-items: center; gap: 8px; }
+  .btn-lonely {
+    padding: 7px 16px; border-radius: 20px;
+    background: var(--warm); color: white;
+    border: none; cursor: pointer;
+    font-size: 13px; font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .btn-lonely:hover { background: #b3705a; transform: translateY(-1px); }
+  .pulse-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #ff8a8a;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.3); }
+  }
+
+  /* PAGES */
+  .page { display: none; padding-top: 60px; min-height: 100vh; }
+  .page.active { display: block; }
+  .container { max-width: 800px; margin: 0 auto; padding: 32px 24px; }
+
+  /* HOME PAGE */
+  .home-header {
+    text-align: center;
+    padding: 48px 24px 32px;
+  }
+  .home-header h1 {
+    font-family: 'Lora', serif;
+    font-size: 38px; font-weight: 600;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+  .home-header h1 em { color: var(--accent); font-style: italic; }
+  .home-header p { color: var(--text2); font-size: 16px; line-height: 1.7; max-width: 440px; margin: 0 auto; }
+
+  /* MOOD CARD */
+  .mood-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r2);
+    padding: 32px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+  }
+  .mood-card h2 {
+    font-family: 'Lora', serif;
+    font-size: 20px; font-weight: 500;
+    margin-bottom: 24px; color: var(--text);
+  }
+  .mood-label { font-size: 13px; font-weight: 500; color: var(--text2); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* EMOJI MOODS */
+  .emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px; margin-bottom: 24px;
+  }
+  .emoji-btn {
+    aspect-ratio: 1;
+    border-radius: 14px;
+    border: 2px solid var(--border);
+    background: var(--surface2);
+    cursor: pointer;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 4px;
+    transition: all 0.2s;
+    padding: 8px 4px;
+  }
+  .emoji-btn:hover { border-color: var(--accent2); background: var(--accent3); transform: translateY(-2px); }
+  .emoji-btn.selected { border-color: var(--accent); background: var(--accent3); box-shadow: 0 0 0 3px rgba(124,158,143,0.2); }
+  .emoji-btn .e { font-size: 22px; line-height: 1; }
+  .emoji-btn .el { font-size: 9px; color: var(--text3); font-weight: 500; text-align: center; line-height: 1.2; }
+
+  /* INTENSITY SLIDER */
+  .slider-wrap { margin-bottom: 24px; }
+  .slider-row { display: flex; align-items: center; gap: 12px; }
+  input[type=range] {
+    flex: 1; height: 4px; border-radius: 2px;
+    background: var(--bg3); outline: none; border: none;
+    -webkit-appearance: none; cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--accent); border: 3px solid white;
+    box-shadow: 0 0 0 2px var(--accent);
+    cursor: pointer;
+  }
+  .slider-val {
+    font-family: 'Lora', serif;
+    font-size: 22px; font-weight: 600;
+    color: var(--accent); min-width: 32px; text-align: right;
+  }
+  .slider-labels { display: flex; justify-content: space-between; margin-top: 6px; }
+  .slider-labels span { font-size: 11px; color: var(--text3); }
+
+  /* TEXT INPUT */
+  textarea {
+    width: 100%; padding: 14px 16px;
+    border: 1px solid var(--border2); border-radius: var(--r);
+    background: var(--bg); color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px; line-height: 1.6;
+    resize: none; outline: none;
+    transition: border-color 0.2s;
+  }
+  textarea:focus { border-color: var(--accent); }
+  textarea::placeholder { color: var(--text3); }
+
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 28px; border-radius: 24px;
+    background: var(--accent); color: white;
+    border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 500;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(124,158,143,0.35);
+  }
+  .btn-primary:hover { background: #6a8d7e; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,158,143,0.4); }
+  .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 20px; border-radius: 20px;
+    background: transparent; color: var(--text2);
+    border: 1px solid var(--border2); cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 500;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { background: var(--bg2); color: var(--text); }
+
+  /* QUICK SUGGESTIONS */
+  .suggestions-row {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-top: 16px;
+  }
+  .suggestion-pill {
+    padding: 7px 14px; border-radius: 20px;
+    background: var(--gold3); color: var(--gold);
+    border: 1px solid var(--gold2);
+    font-size: 13px; font-weight: 500;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .suggestion-pill:hover { background: var(--gold2); }
+
+  /* COMPANION RESPONSE */
+  .companion-reply {
+    background: linear-gradient(135deg, var(--surface) 0%, var(--warm3) 100%);
+    border: 1px solid var(--warm2);
+    border-radius: var(--r2);
+    padding: 28px 32px;
+    margin-top: 20px;
+    display: none;
+    animation: fadeSlide 0.4s ease;
+  }
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .companion-reply.show { display: block; }
+  .companion-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--accent); display: flex;
+    align-items: center; justify-content: center;
+    font-size: 18px; margin-bottom: 14px;
+    color: white;
+  }
+  .companion-name { font-size: 12px; font-weight: 500; color: var(--text3); margin-bottom: 4px; letter-spacing: 0.5px; }
+  .companion-text {
+    font-family: 'Lora', serif;
+    font-size: 16px; line-height: 1.8; color: var(--text);
+    font-style: italic;
+  }
+  .companion-affirmation {
+    margin-top: 16px; padding: 12px 16px;
+    background: rgba(124,158,143,0.12);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    font-size: 14px; color: var(--text2); line-height: 1.6;
+  }
+  .loading-dots { display: flex; gap: 5px; align-items: center; padding: 8px 0; }
+  .loading-dots span {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent); opacity: 0.4;
+    animation: dot 1.2s infinite;
+  }
+  .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes dot { 0%,80%,100% { opacity: 0.2; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1.1); } }
+
+  /* HISTORY */
+  .history-empty { text-align: center; padding: 48px; color: var(--text3); font-family: 'Lora', serif; font-style: italic; font-size: 16px; }
+  .mood-entry {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 18px 20px;
+    margin-bottom: 12px;
+    display: flex; align-items: flex-start; gap: 14px;
+    animation: fadeSlide 0.3s ease;
+  }
+  .entry-emoji { font-size: 28px; line-height: 1; flex-shrink: 0; }
+  .entry-body { flex: 1; }
+  .entry-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .entry-mood { font-weight: 500; font-size: 15px; color: var(--text); }
+  .entry-time { font-size: 12px; color: var(--text3); }
+  .entry-text { font-size: 14px; color: var(--text2); line-height: 1.5; margin-bottom: 6px; }
+  .entry-intensity {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 12px; color: var(--accent); font-weight: 500;
+  }
+  .intensity-bar {
+    height: 4px; border-radius: 2px; background: var(--bg3);
+    width: 60px; overflow: hidden;
+  }
+  .intensity-fill { height: 100%; border-radius: 2px; background: var(--accent); }
+
+  /* CHAT PAGE */
+  .chat-wrap {
+    display: flex; flex-direction: column;
+    height: calc(100vh - 60px);
+    max-width: 700px; margin: 0 auto;
+  }
+  .chat-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    display: flex; align-items: center; gap: 14px;
+    flex-shrink: 0;
+  }
+  .companion-circle {
+    width: 46px; height: 46px; border-radius: 50%;
+    background: var(--accent); display: flex;
+    align-items: center; justify-content: center;
+    font-size: 20px; color: white; position: relative;
+  }
+  .online-dot {
+    position: absolute; bottom: 1px; right: 1px;
+    width: 11px; height: 11px; border-radius: 50%;
+    background: #4caf50; border: 2px solid var(--surface);
+  }
+  .chat-header-info h3 { font-size: 16px; font-weight: 500; color: var(--text); }
+  .chat-header-info p { font-size: 12px; color: var(--accent); }
+  .chat-messages {
+    flex: 1; overflow-y: auto; padding: 20px 24px;
+    display: flex; flex-direction: column; gap: 16px;
+    scroll-behavior: smooth;
+  }
+  .chat-messages::-webkit-scrollbar { width: 4px; }
+  .chat-messages::-webkit-scrollbar-track { background: transparent; }
+  .chat-messages::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 2px; }
+
+  .msg { max-width: 78%; display: flex; flex-direction: column; gap: 4px; }
+  .msg.user { align-self: flex-end; align-items: flex-end; }
+  .msg.ai { align-self: flex-start; }
+  .msg-bubble {
+    padding: 12px 16px; border-radius: 18px;
+    font-size: 15px; line-height: 1.65;
+  }
+  .msg.user .msg-bubble {
+    background: var(--accent); color: white;
+    border-bottom-right-radius: 4px;
+  }
+  .msg.ai .msg-bubble {
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text); border-bottom-left-radius: 4px;
+    font-family: 'Lora', serif;
+  }
+  .msg-time { font-size: 11px; color: var(--text3); padding: 0 4px; }
+  .msg.ai .msg-bubble.wisdom {
+    background: var(--gold3); border-color: var(--gold2);
+    border-left: 3px solid var(--gold);
+  }
+  .chat-input-row {
+    padding: 16px 24px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: flex; gap: 10px; align-items: flex-end;
+    flex-shrink: 0;
+  }
+  .chat-textarea {
+    flex: 1; padding: 12px 16px;
+    border: 1px solid var(--border2);
+    border-radius: 24px; background: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px; color: var(--text);
+    outline: none; resize: none;
+    min-height: 44px; max-height: 120px;
+    line-height: 1.5; overflow-y: auto;
+  }
+  .chat-textarea:focus { border-color: var(--accent); }
+  .chat-send {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--accent); color: white;
+    border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; transition: all 0.2s; flex-shrink: 0;
+  }
+  .chat-send:hover { background: #6a8d7e; transform: scale(1.05); }
+  .voice-btn {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--bg2); color: var(--text2);
+    border: 1px solid var(--border2); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; transition: all 0.2s; flex-shrink: 0;
+  }
+  .voice-btn:hover { background: var(--bg3); }
+  .voice-btn.listening { background: #ff6b6b20; border-color: #ff6b6b; color: #ff6b6b; animation: pulse2 1s infinite; }
+  @keyframes pulse2 { 0%,100% { box-shadow: 0 0 0 0 rgba(255,107,107,0.3); } 50% { box-shadow: 0 0 0 8px rgba(255,107,107,0); } }
+  .quick-prompts {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    padding: 0 24px 12px;
+    flex-shrink: 0;
+  }
+  .qp {
+    padding: 6px 14px; border-radius: 20px;
+    background: var(--bg2); color: var(--text2);
+    border: 1px solid var(--border); font-size: 13px;
+    cursor: pointer; transition: all 0.2s; white-space: nowrap;
+  }
+  .qp:hover { background: var(--accent3); color: var(--text); border-color: var(--accent2); }
+
+  /* JOURNAL */
+  .journal-compose {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r2);
+    padding: 28px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow);
+  }
+  .journal-compose h2 { font-family: 'Lora', serif; font-size: 20px; font-weight: 500; margin-bottom: 20px; }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+  .emotion-tag {
+    padding: 5px 12px; border-radius: 20px;
+    border: 1px solid var(--border2);
+    background: var(--surface2); color: var(--text2);
+    font-size: 12px; cursor: pointer; transition: all 0.2s;
+  }
+  .emotion-tag:hover { border-color: var(--accent); color: var(--accent); }
+  .emotion-tag.selected { background: var(--accent); color: white; border-color: var(--accent); }
+  .journal-entry-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 20px;
+    margin-bottom: 12px;
+    animation: fadeSlide 0.3s ease;
+    cursor: pointer;
+    transition: box-shadow 0.2s;
+  }
+  .journal-entry-card:hover { box-shadow: var(--shadow); }
+  .je-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+  .je-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+  .je-tag {
+    padding: 3px 9px; border-radius: 12px;
+    font-size: 11px; font-weight: 500;
+    background: var(--accent3); color: var(--accent);
+  }
+  .je-date { font-size: 12px; color: var(--text3); }
+  .je-text { font-size: 14px; color: var(--text2); line-height: 1.6; margin-bottom: 8px; }
+  .je-reflection {
+    padding: 10px 14px;
+    background: var(--gold3); border-left: 2px solid var(--gold);
+    border-radius: 0 8px 8px 0;
+    font-size: 13px; color: var(--text2); line-height: 1.5;
+    font-style: italic;
+    margin-top: 8px;
+  }
+
+  /* ANALYTICS */
+  .analytics-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 20px;
+  }
+  .stat-label { font-size: 12px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .stat-value { font-family: 'Lora', serif; font-size: 32px; font-weight: 600; color: var(--text); line-height: 1; }
+  .stat-sub { font-size: 13px; color: var(--text2); margin-top: 6px; }
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r2);
+    padding: 24px; margin-bottom: 20px;
+  }
+  .chart-card h3 { font-family: 'Lora', serif; font-size: 17px; font-weight: 500; margin-bottom: 20px; color: var(--text); }
+  canvas { width: 100% !important; }
+  .insight-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 18px 20px;
+    margin-bottom: 12px;
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  .insight-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .insight-body h4 { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+  .insight-body p { font-size: 13px; color: var(--text2); line-height: 1.5; }
+  .progress-bar-wrap { margin: 12px 0; }
+  .pb-label { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 13px; color: var(--text2); }
+  .pb { height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
+  .pb-fill { height: 100%; border-radius: 3px; transition: width 1s ease; }
+
+  /* LONELY MODE MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(30,20,10,0.6);
+    backdrop-filter: blur(4px);
+    display: none; align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .modal-overlay.show { display: flex; }
+  .lonely-modal {
+    background: var(--surface);
+    border-radius: 28px;
+    padding: 40px;
+    max-width: 480px; width: 100%;
+    box-shadow: var(--shadow2);
+    animation: modalIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    text-align: center;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.85) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .lonely-heart {
+    font-size: 52px; margin-bottom: 16px;
+    animation: heartbeat 2s ease-in-out infinite;
+  }
+  @keyframes heartbeat { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+  .lonely-modal h2 {
+    font-family: 'Lora', serif; font-size: 26px; font-weight: 500;
+    color: var(--text); margin-bottom: 10px;
+  }
+  .lonely-modal p { font-size: 15px; color: var(--text2); line-height: 1.7; margin-bottom: 24px; }
+  .lonely-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .lonely-opt {
+    padding: 14px 20px; border-radius: 14px;
+    border: 1px solid var(--border2); background: var(--bg);
+    cursor: pointer; text-align: left; transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .lonely-opt:hover { border-color: var(--accent); background: var(--accent3); }
+  .lonely-opt-title { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+  .lonely-opt-desc { font-size: 13px; color: var(--text2); }
+  .close-modal { background: none; border: none; cursor: pointer; color: var(--text3); font-size: 24px; float: right; margin: -20px -20px 0 0; line-height: 1; }
+
+  /* BREATHING EXERCISE */
+  .breathing-overlay {
+    position: fixed; inset: 0; z-index: 300;
+    background: #1a2a22;
+    display: none; align-items: center; justify-content: center;
+    flex-direction: column;
+  }
+  .breathing-overlay.show { display: flex; }
+  .breathing-circle {
+    width: 200px; height: 200px; border-radius: 50%;
+    background: rgba(124,158,143,0.15);
+    border: 2px solid rgba(124,158,143,0.3);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 32px;
+    animation: none;
+  }
+  .breathing-circle.inhale { animation: inhale 4s ease-in-out forwards; }
+  .breathing-circle.hold { border-color: rgba(200,168,80,0.5); }
+  .breathing-circle.exhale { animation: exhale 4s ease-in-out forwards; }
+  @keyframes inhale { to { transform: scale(1.5); background: rgba(124,158,143,0.3); } }
+  @keyframes exhale { from { transform: scale(1.5); } to { transform: scale(1); } }
+  .breathing-text { color: white; font-family: 'Lora', serif; font-size: 24px; text-align: center; margin-bottom: 12px; }
+  .breathing-sub { color: rgba(255,255,255,0.5); font-size: 15px; text-align: center; }
+  .breathing-count { font-size: 48px; font-weight: 300; color: var(--accent2); font-family: 'Lora', serif; margin-bottom: 8px; }
+  .exit-breath {
+    position: absolute; top: 24px; right: 24px;
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+    color: white; padding: 8px 16px; border-radius: 20px;
+    cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 14px;
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: var(--text); color: white;
+    padding: 12px 24px; border-radius: 24px;
+    font-size: 14px; z-index: 1000;
+    opacity: 0; transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .analytics-grid { grid-template-columns: 1fr; }
+    .emoji-grid { grid-template-columns: repeat(4, 1fr); }
+    nav .nav-tabs .nav-tab .tab-label { display: none; }
+    .home-header h1 { font-size: 28px; }
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 3px; }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-family: 'Lora', serif; font-size: 22px; font-weight: 500;
+    color: var(--text); margin-bottom: 6px;
+  }
+  .section-sub { font-size: 14px; color: var(--text2); margin-bottom: 24px; }
+
+  /* WISDOM QUOTE */
+  .wisdom-banner {
+    background: var(--gold3);
+    border: 1px solid var(--gold2);
+    border-radius: var(--r2);
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    position: relative; overflow: hidden;
+  }
+  .wisdom-banner::before {
+    content: '"';
+    position: absolute; top: -10px; left: 16px;
+    font-family: 'Lora', serif; font-size: 80px;
+    color: var(--gold2); line-height: 1;
+    pointer-events: none;
+  }
+  .wisdom-text {
+    font-family: 'Lora', serif; font-size: 17px;
+    font-style: italic; color: var(--text);
+    line-height: 1.7; margin-bottom: 8px;
+    padding-left: 20px;
+  }
+  .wisdom-source { font-size: 13px; color: var(--gold); padding-left: 20px; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">S<span>e</span>rene</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('home')" id="tab-home">
+      <span>✿</span> <span class="tab-label">Today</span>
+    </button>
+    <button class="nav-tab" onclick="showPage('chat')" id="tab-chat">
+      <span>⌁</span> <span class="tab-label">Talk</span>
+    </button>
+    <button class="nav-tab" onclick="showPage('journal')" id="tab-journal">
+      <span>✎</span> <span class="tab-label">Journal</span>
+    </button>
+    <button class="nav-tab" onclick="showPage('analytics')" id="tab-analytics">
+      <span>◎</span> <span class="tab-label">Insights</span>
+    </button>
+  </div>
+  <div class="nav-right">
+    <button class="btn-lonely" onclick="openLonely()">
+      <div class="pulse-dot"></div>
+      I need someone
+    </button>
+  </div>
+</nav>
+
+<!-- HOME PAGE -->
+<div class="page active" id="page-home">
+  <div style="max-width: 680px; margin: 0 auto; padding: 32px 24px;">
+
+    <div class="home-header" style="padding-top: 24px;">
+      <h1>How are you feeling<br><em>right now?</em></h1>
+      <p>This is a safe, gentle space. There's no right or wrong way to feel.</p>
+    </div>
+
+    <!-- Daily wisdom -->
+    <div class="wisdom-banner" id="daily-wisdom">
+      <p class="wisdom-text" id="wisdom-text">The soul that sees beauty may sometimes walk alone.</p>
+      <p class="wisdom-source" id="wisdom-source">— Johann Wolfgang von Goethe</p>
+    </div>
+
+    <!-- Mood Input -->
+    <div class="mood-card">
+      <h2>Check in with yourself</h2>
+
+      <div class="mood-label">What best describes your mood?</div>
+      <div class="emoji-grid">
+        <button class="emoji-btn" onclick="selectMood(this, 'Happy', '😊')" data-mood="Happy" data-emoji="😊">
+          <span class="e">😊</span><span class="el">Happy</span>
+        </button>
+        <button class="emoji-btn" onclick="selectMood(this, 'Peaceful', '😌')" data-mood="Peaceful" data-emoji="😌">
+          <span class="e">😌</span><span class="el">Peaceful</span>
+        </button>
+        <button class="emoji-btn" onclick="selectMood(this, 'Grateful', '🥹')" data-mood="Grateful" data-emoji="🥹">
+          <span class="e">🥹</span><span class="el">Grateful</span>
+        </button>
+        <button class="emoji-btn" onclick="selectMood(this, 'Sad', '😢')" data-mood="Sad" data-emoji="😢">
+          <span class="e">😢</span><span class="el">Sad</span>
+        </button>
+        <button class="emoji-btn" onclick="selectMood(this, 'Anxious', '😰')" data-mood="Anxious" data-emoji="😰">
+          <span class="e">😰</span><span class="el">Anxious</span>
+        </button>
+        <button class="emoji-btn" onclick="selectMood(this, 'Angry', '😤')" data-mood="Angry" data-emoji="😤">
+          <span class="e">😤</span><span class="el">Angry</span>
+        </button>
+        <button class="emoji-btn" onclick="selectMood(this, 'Confused', '😕')" data-mood="Confused" data-emoji="😕">
+          <span class="e">😕</span><span class="el">Confused</span>
+        </button>
+        <button class="emoji-btn" onclick="selectMood(this, 'Tired', '😴')" data-mood="Tired" data-emoji="😴">
+          <span class="e">😴</span><span class="el">Tired</span>
+        </button>
+        <button class="emoji-btn" onclick="selectMood(this, 'Hopeful', '🌱')" data-mood="Hopeful" data-emoji="🌱">
+          <span class="e">🌱</span><span class="el">Hopeful</span>
+        </button>
+        <button class="emoji-btn" onclick="selectMood(this, 'Lonely', '🌧️')" data-mood="Lonely" data-emoji="🌧️">
+          <span class="e">🌧️</span><span class="el">Lonely</span>
+        </button>
+        <button class="emoji-btn" onclick="selectMood(this, 'Excited', '✨')" data-mood="Excited" data-emoji="✨">
+          <span class="e">✨</span><span class="el">Excited</span>
+        </button>
+        <button class="emoji-btn" onclick="selectMood(this, 'Numb', '🌫️')" data-mood="Numb" data-emoji="🌫️">
+          <span class="e">🌫️</span><span class="el">Numb</span>
+        </button>
+        <button class="emoji-btn" onclick="selectMood(this, 'Overwhelmed', '🌊')" data-mood="Overwhelmed" data-emoji="🌊">
+          <span class="e">🌊</span><span class="el">Overwhelmed</span>
+        </button>
+        <button class="emoji-btn" onclick="selectMood(this, 'Content', '☁️')" data-mood="Content" data-emoji="☁️">
+          <span class="e">☁️</span><span class="el">Content</span>
+        </button>
+      </div>
+
+      <div class="slider-wrap">
+        <div class="mood-label">Intensity of this feeling</div>
+        <div class="slider-row">
+          <span style="font-size:14px;color:var(--text3)">Mild</span>
+          <input type="range" min="1" max="10" value="5" id="intensity-slider" oninput="updateIntensity(this.value)">
+          <span style="font-size:14px;color:var(--text3)">Intense</span>
+          <span class="slider-val" id="intensity-val">5</span>
+        </div>
+        <div class="slider-labels"><span>1</span><span>5</span><span>10</span></div>
+      </div>
+
+      <div class="mood-label">What's on your mind? (optional)</div>
+      <textarea id="mood-text" rows="3" placeholder="Write freely... this is your space. What happened today? What are you feeling inside?"></textarea>
+
+      <div style="margin-top: 20px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+        <button class="btn-primary" id="checkin-btn" onclick="submitCheckin()">
+          ✦ Share with Serene
+        </button>
+        <button class="btn-secondary" onclick="startBreathing()">
+          ◎ Breathe with me
+        </button>
+      </div>
+    </div>
+
+    <!-- AI Reply -->
+    <div class="companion-reply" id="companion-reply">
+      <div class="companion-avatar">✦</div>
+      <div class="companion-name">SERENE · YOUR COMPANION</div>
+      <div class="companion-text" id="companion-text">Loading...</div>
+      <div class="companion-affirmation" id="companion-affirmation"></div>
+      <div class="suggestions-row" id="suggestions-row"></div>
+    </div>
+
+    <!-- Recent Moods -->
+    <div style="margin-top: 32px;">
+      <div class="section-title">Recent check-ins</div>
+      <div class="section-sub">Your emotional journey this week</div>
+      <div id="recent-moods">
+        <div class="history-empty">Your check-ins will appear here.<br>Begin whenever you're ready.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CHAT PAGE -->
+<div class="page" id="page-chat">
+  <div class="chat-wrap">
+    <div class="chat-header">
+      <div class="companion-circle">✦<div class="online-dot"></div></div>
+      <div class="chat-header-info">
+        <h3>Serene</h3>
+        <p>Always here for you · Private & safe</p>
+      </div>
+    </div>
+    <div class="chat-messages" id="chat-messages">
+      <div class="msg ai">
+        <div class="msg-bubble">
+          Hello, dear one. I'm so glad you're here. This is a place where you can say anything — no judgment, only understanding. What's on your heart today?
+        </div>
+        <span class="msg-time">Now</span>
+      </div>
+    </div>
+    <div class="quick-prompts" id="quick-prompts">
+      <button class="qp" onclick="sendQuick(this)">I feel overwhelmed</button>
+      <button class="qp" onclick="sendQuick(this)">I can't sleep</button>
+      <button class="qp" onclick="sendQuick(this)">I feel lost</button>
+      <button class="qp" onclick="sendQuick(this)">Help me calm down</button>
+      <button class="qp" onclick="sendQuick(this)">I need motivation</button>
+    </div>
+    <div class="chat-input-row">
+      <button class="voice-btn" id="voice-btn" onclick="toggleVoice()" title="Voice input">🎤</button>
+      <textarea class="chat-textarea" id="chat-input" placeholder="Type your thoughts..." rows="1"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}"
+        oninput="autoResize(this)"></textarea>
+      <button class="chat-send" onclick="sendChat()">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- JOURNAL PAGE -->
+<div class="page" id="page-journal">
+  <div class="container">
+    <div class="section-title">Your Journal</div>
+    <div class="section-sub">A private space to think, reflect, and heal through words.</div>
+
+    <div class="journal-compose">
+      <h2>New Entry</h2>
+      <textarea id="journal-text" rows="5" placeholder="Dear journal... what's been weighing on you? What are you grateful for? Write freely — this is yours alone."></textarea>
+      <div style="margin: 14px 0 8px;">
+        <div class="mood-label">Tag this entry</div>
+        <div class="tag-row" id="journal-tags">
+          <span class="emotion-tag" onclick="toggleTag(this)">Reflective</span>
+          <span class="emotion-tag" onclick="toggleTag(this)">Grateful</span>
+          <span class="emotion-tag" onclick="toggleTag(this)">Anxious</span>
+          <span class="emotion-tag" onclick="toggleTag(this)">Hopeful</span>
+          <span class="emotion-tag" onclick="toggleTag(this)">Processing</span>
+          <span class="emotion-tag" onclick="toggleTag(this)">Healing</span>
+          <span class="emotion-tag" onclick="toggleTag(this)">Growth</span>
+          <span class="emotion-tag" onclick="toggleTag(this)">Grief</span>
+          <span class="emotion-tag" onclick="toggleTag(this)">Joy</span>
+        </div>
+      </div>
+      <div style="display: flex; gap: 10px; margin-top: 16px;">
+        <button class="btn-primary" onclick="saveJournalEntry()">✦ Save & Reflect</button>
+        <button class="btn-secondary" onclick="clearJournal()">Clear</button>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-bottom: 16px;">Past Entries</div>
+    <div id="journal-entries">
+      <div class="history-empty">Your journal entries will appear here.<br>Begin writing to find clarity.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ANALYTICS PAGE -->
+<div class="page" id="page-analytics">
+  <div class="container">
+    <div class="section-title">Your Emotional Insights</div>
+    <div class="section-sub">Patterns, progress, and gentle observations from your journey.</div>
+
+    <div class="analytics-grid" id="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Check-ins this week</div>
+        <div class="stat-value" id="stat-checkins">0</div>
+        <div class="stat-sub">Keep showing up for yourself</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Most felt emotion</div>
+        <div class="stat-value" id="stat-top-mood" style="font-size:20px;">—</div>
+        <div class="stat-sub" id="stat-top-sub">Log moods to see patterns</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Avg. intensity</div>
+        <div class="stat-value" id="stat-avg">—</div>
+        <div class="stat-sub">Your emotional weight</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Journal entries</div>
+        <div class="stat-value" id="stat-journals">0</div>
+        <div class="stat-sub">Words of reflection written</div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h3>Mood over the past 7 days</h3>
+      <canvas id="moodChart" height="200"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <h3>Emotional distribution</h3>
+      <canvas id="distChart" height="220"></canvas>
+    </div>
+
+    <div class="section-title" style="margin-bottom: 16px;">Gentle insights</div>
+    <div id="insights-list">
+      <div class="insight-card">
+        <div class="insight-icon" style="background:var(--accent3);">🌱</div>
+        <div class="insight-body">
+          <h4>You're building awareness</h4>
+          <p>Just the act of checking in with yourself shows tremendous self-compassion. Every entry is a step toward understanding.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LONELY MODAL -->
+<div class="modal-overlay" id="lonely-modal">
+  <div class="lonely-modal">
+    <button class="close-modal" onclick="closeLonely()">×</button>
+    <div class="lonely-heart">🫂</div>
+    <h2>You reached out.<br>That took courage.</h2>
+    <p>You don't have to explain yourself. Feeling alone is one of the hardest human experiences. I'm right here with you.</p>
+    <div class="lonely-options">
+      <button class="lonely-opt" onclick="startLonelyChat('just talk')">
+        <div class="lonely-opt-title">Just... talk to me</div>
+        <div class="lonely-opt-desc">No topic, no agenda. Just a warm presence.</div>
+      </button>
+      <button class="lonely-opt" onclick="startLonelyChat('help me calm down')">
+        <div class="lonely-opt-title">Help me calm down</div>
+        <div class="lonely-opt-desc">Breathing, grounding, gentle guidance.</div>
+      </button>
+      <button class="lonely-opt" onclick="startBreathing()">
+        <div class="lonely-opt-title">Guide me through breathing</div>
+        <div class="lonely-opt-desc">A 4-7-8 breathing exercise together.</div>
+      </button>
+      <button class="lonely-opt" onclick="startLonelyChat('remind me it will be okay')">
+        <div class="lonely-opt-title">Remind me it will be okay</div>
+        <div class="lonely-opt-desc">Words of warmth and wisdom for hard moments.</div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- BREATHING OVERLAY -->
+<div class="breathing-overlay" id="breathing-overlay">
+  <button class="exit-breath" onclick="stopBreathing()">End session</button>
+  <div class="breathing-circle" id="breath-circle">
+    <div style="text-align:center">
+      <div class="breathing-count" id="breath-count">4</div>
+    </div>
+  </div>
+  <div class="breathing-text" id="breath-text">Breathe in...</div>
+  <div class="breathing-sub">4–7–8 breathing · Let go of tension</div>
+  <p style="color:rgba(255,255,255,0.35);font-size:13px;margin-top:24px;text-align:center;">Find a comfortable position. You are safe.</p>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+// ─── STATE ───────────────────────────────────────────────────────────
+let state = {
+  moodHistory: [],
+  journals: [],
+  chatHistory: [],
+  selectedMood: null,
+  selectedMoodEmoji: null,
+};
+
+const WISDOM = [
+  { text: "The present moment is the only moment available to us, and it is the door to all moments.", source: "Thich Nhat Hanh" },
+  { text: "You don't have to control your thoughts. You just have to stop letting them control you.", source: "Dan Millman" },
+  { text: "In the middle of difficulty lies opportunity.", source: "Albert Einstein" },
+  { text: "The wound is the place where the Light enters you.", source: "Rumi" },
+  { text: "What you are is what you have been. What you'll be is what you do now.", source: "Buddha" },
+  { text: "Be gentle with yourself. You are a child of the universe, no less than the trees and stars.", source: "Max Ehrmann" },
+  { text: "Not all those who wander are lost.", source: "J.R.R. Tolkien" },
+  { text: "Sometimes your joy is the source of your smile, but sometimes your smile can be the source of your joy.", source: "Thich Nhat Hanh" },
+  { text: "The soul that sees beauty may sometimes walk alone.", source: "Goethe" },
+  { text: "Every morning we are born again. What we do today is what matters most.", source: "Buddha" },
+];
+
+function loadState() {
+  try {
+    const s = localStorage.getItem('serene_state');
+    if (s) state = { ...state, ...JSON.parse(s) };
+  } catch(e) {}
+  renderHistory();
+  renderJournals();
+  updateAnalytics();
+  setDailyWisdom();
+}
+
+function saveState() {
+  try { localStorage.setItem('serene_state', JSON.stringify(state)); } catch(e) {}
+}
+
+// ─── NAVIGATION ──────────────────────────────────────────────────────
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.getElementById('tab-' + page).classList.add('active');
+  if (page === 'analytics') { setTimeout(updateAnalytics, 100); }
+}
+
+// ─── DAILY WISDOM ────────────────────────────────────────────────────
+function setDailyWisdom() {
+  const day = new Date().getDay();
+  const w = WISDOM[day % WISDOM.length];
+  document.getElementById('wisdom-text').textContent = w.text;
+  document.getElementById('wisdom-source').textContent = '— ' + w.source;
+}
+
+// ─── MOOD TRACKING ───────────────────────────────────────────────────
+function selectMood(btn, mood, emoji) {
+  document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.selectedMood = mood;
+  state.selectedMoodEmoji = emoji;
+}
+
+function updateIntensity(val) {
+  document.getElementById('intensity-val').textContent = val;
+}
+
+async function submitCheckin() {
+  if (!state.selectedMood) { showToast('Please select a mood first 🌸'); return; }
+  const intensity = parseInt(document.getElementById('intensity-slider').value);
+  const text = document.getElementById('mood-text').value.trim();
+  const entry = {
+    mood: state.selectedMood,
+    emoji: state.selectedMoodEmoji,
+    intensity,
+    text,
+    timestamp: new Date().toISOString(),
+  };
+  state.moodHistory.unshift(entry);
+  saveState();
+  renderHistory();
+
+  // Show companion reply
+  const replyEl = document.getElementById('companion-reply');
+  replyEl.classList.add('show');
+  document.getElementById('companion-text').innerHTML = '<div class="loading-dots"><span></span><span></span><span></span></div>';
+  document.getElementById('companion-affirmation').textContent = '';
+  document.getElementById('suggestions-row').innerHTML = '';
+
+  const btn = document.getElementById('checkin-btn');
+  btn.disabled = true;
+  try {
+    const response = await callCompanion(entry, 'checkin');
+    renderCheckinReply(response, entry);
+  } catch(e) {
+    renderCheckinReply(getFallbackCheckinReply(entry), entry);
+  }
+  btn.disabled = false;
+}
+
+function renderCheckinReply(data, entry) {
+  document.getElementById('companion-text').textContent = data.message;
+  document.getElementById('companion-affirmation').textContent = data.affirmation;
+  const srow = document.getElementById('suggestions-row');
+  srow.innerHTML = '';
+  (data.suggestions || []).forEach(s => {
+    const pill = document.createElement('button');
+    pill.className = 'suggestion-pill';
+    pill.textContent = s;
+    pill.onclick = () => { showPage('chat'); setTimeout(() => { addQuickToChatAndSend(s); }, 200); };
+    srow.appendChild(pill);
+  });
+  replyEl = document.getElementById('companion-reply');
+  replyEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function renderHistory() {
+  const container = document.getElementById('recent-moods');
+  const recent = state.moodHistory.slice(0, 5);
+  if (!recent.length) {
+    container.innerHTML = '<div class="history-empty">Your check-ins will appear here.<br>Begin whenever you\'re ready.</div>';
+    return;
+  }
+  container.innerHTML = recent.map(e => `
+    <div class="mood-entry">
+      <div class="entry-emoji">${e.emoji}</div>
+      <div class="entry-body">
+        <div class="entry-top">
+          <span class="entry-mood">${e.mood}</span>
+          <span class="entry-time">${formatTime(e.timestamp)}</span>
+        </div>
+        ${e.text ? `<div class="entry-text">${escHtml(e.text.substring(0, 140))}${e.text.length > 140 ? '...' : ''}</div>` : ''}
+        <div class="entry-intensity">
+          <div class="intensity-bar"><div class="intensity-fill" style="width:${e.intensity * 10}%"></div></div>
+          Intensity ${e.intensity}/10
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ─── CHAT ─────────────────────────────────────────────────────────────
+function sendQuick(btn) {
+  const text = btn.textContent;
+  document.getElementById('chat-input').value = text;
+  sendChat();
+}
+
+function addQuickToChatAndSend(text) {
+  document.getElementById('chat-input').value = text;
+  sendChat();
+}
+
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  autoResize(input);
+
+  appendMsg('user', text);
+  state.chatHistory.push({ role: 'user', content: text });
+
+  const typingId = appendMsg('ai', null, true);
+  try {
+    const reply = await callCompanionChat(text);
+    removeMsg(typingId);
+    const isWisdom = reply.type === 'wisdom';
+    appendMsg('ai', reply.message, false, isWisdom);
+    state.chatHistory.push({ role: 'assistant', content: reply.message });
+    if (state.chatHistory.length > 20) state.chatHistory = state.chatHistory.slice(-20);
+  } catch(e) {
+    removeMsg(typingId);
+    appendMsg('ai', getFallbackChatReply(text));
+  }
+}
+
+let msgIdCounter = 0;
+function appendMsg(role, text, isTyping = false, isWisdom = false) {
+  const id = 'msg-' + (++msgIdCounter);
+  const msgs = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = 'msg ' + role;
+  div.id = id;
+  const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  div.innerHTML = `
+    <div class="msg-bubble${isWisdom ? ' wisdom' : ''}">
+      ${isTyping ? '<div class="loading-dots"><span></span><span></span><span></span></div>' : escHtml(text).replace(/\n/g, '<br>')}
+    </div>
+    <span class="msg-time">${time}</span>
+  `;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return id;
+}
+
+function removeMsg(id) {
+  const el = document.getElementById(id);
+  if (el) el.remove();
+}
+
+// ─── VOICE INPUT ──────────────────────────────────────────────────────
+let recognition = null;
+let isListening = false;
+
+function toggleVoice() {
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    showToast('Voice not supported in this browser 🎤'); return;
+  }
+  const btn = document.getElementById('voice-btn');
+  if (isListening) {
+    recognition && recognition.stop();
+    isListening = false;
+    btn.classList.remove('listening');
+    btn.textContent = '🎤';
+    return;
+  }
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SR();
+  recognition.continuous = false;
+  recognition.interimResults = true;
+  recognition.lang = 'en-US';
+  recognition.onresult = (e) => {
+    const transcript = Array.from(e.results).map(r => r[0].transcript).join('');
+    document.getElementById('chat-input').value = transcript;
+    autoResize(document.getElementById('chat-input'));
+  };
+  recognition.onend = () => {
+    isListening = false;
+    btn.classList.remove('listening');
+    btn.textContent = '🎤';
+    const val = document.getElementById('chat-input').value.trim();
+    if (val) sendChat();
+  };
+  recognition.onerror = () => {
+    isListening = false;
+    btn.classList.remove('listening');
+    btn.textContent = '🎤';
+  };
+  recognition.start();
+  isListening = true;
+  btn.classList.add('listening');
+  btn.textContent = '⏹';
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+// ─── JOURNAL ──────────────────────────────────────────────────────────
+function toggleTag(el) { el.classList.toggle('selected'); }
+
+async function saveJournalEntry() {
+  const text = document.getElementById('journal-text').value.trim();
+  if (!text) { showToast('Write something first 🌿'); return; }
+  const tags = [...document.querySelectorAll('#journal-tags .selected')].map(t => t.textContent);
+
+  const entry = {
+    text,
+    tags,
+    timestamp: new Date().toISOString(),
+    reflection: null,
+  };
+  state.journals.unshift(entry);
+  saveState();
+
+  // Get AI reflection
+  try {
+    const r = await callJournalReflection(text);
+    state.journals[0].reflection = r;
+    saveState();
+  } catch(e) {
+    state.journals[0].reflection = "Thank you for sharing your thoughts. Writing is an act of courage and self-compassion.";
+  }
+
+  document.getElementById('journal-text').value = '';
+  document.querySelectorAll('#journal-tags .selected').forEach(t => t.classList.remove('selected'));
+  renderJournals();
+  showToast('Entry saved ✨');
+  updateAnalytics();
+}
+
+function clearJournal() {
+  document.getElementById('journal-text').value = '';
+  document.querySelectorAll('#journal-tags .selected').forEach(t => t.classList.remove('selected'));
+}
+
+function renderJournals() {
+  const container = document.getElementById('journal-entries');
+  if (!state.journals.length) {
+    container.innerHTML = '<div class="history-empty">Your journal entries will appear here.<br>Begin writing to find clarity.</div>';
+    return;
+  }
+  container.innerHTML = state.journals.slice(0, 10).map(e => `
+    <div class="journal-entry-card">
+      <div class="je-header">
+        <div class="je-tags">${e.tags.map(t => `<span class="je-tag">${t}</span>`).join('')}</div>
+        <span class="je-date">${formatTime(e.timestamp)}</span>
+      </div>
+      <div class="je-text">${escHtml(e.text.substring(0, 200))}${e.text.length > 200 ? '...' : ''}</div>
+      ${e.reflection ? `<div class="je-reflection">✦ ${escHtml(e.reflection)}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+// ─── ANALYTICS ────────────────────────────────────────────────────────
+let moodChartInst = null, distChartInst = null;
+
+function updateAnalytics() {
+  const h = state.moodHistory;
+  document.getElementById('stat-checkins').textContent = h.length;
+  document.getElementById('stat-journals').textContent = state.journals.length;
+
+  if (!h.length) {
+    document.getElementById('stat-top-mood').textContent = '—';
+    document.getElementById('stat-avg').textContent = '—';
+    drawEmptyCharts();
+    return;
+  }
+
+  const moodCount = {};
+  let totalIntensity = 0;
+  h.forEach(e => { moodCount[e.mood] = (moodCount[e.mood] || 0) + 1; totalIntensity += e.intensity; });
+  const topMood = Object.entries(moodCount).sort((a,b) => b[1]-a[1])[0];
+  document.getElementById('stat-top-mood').textContent = topMood[0];
+  document.getElementById('stat-top-sub').textContent = `Logged ${topMood[1]} time${topMood[1]>1?'s':''}`;
+  document.getElementById('stat-avg').textContent = (totalIntensity / h.length).toFixed(1);
+
+  drawMoodChart();
+  drawDistChart(moodCount);
+  renderInsights(moodCount, totalIntensity / h.length);
+}
+
+function drawMoodChart() {
+  const ctx = document.getElementById('moodChart').getContext('2d');
+  if (moodChartInst) moodChartInst.destroy();
+  const days = [];
+  const intensities = [];
+  const labels = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const dateStr = d.toDateString();
+    labels.push(d.toLocaleDateString('en', { weekday: 'short' }));
+    const dayEntries = state.moodHistory.filter(e => new Date(e.timestamp).toDateString() === dateStr);
+    intensities.push(dayEntries.length ? dayEntries.reduce((s,e) => s + e.intensity, 0) / dayEntries.length : null);
+  }
+  moodChartInst = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Avg intensity',
+        data: intensities,
+        borderColor: '#7c9e8f',
+        backgroundColor: 'rgba(124,158,143,0.08)',
+        borderWidth: 2,
+        pointBackgroundColor: '#7c9e8f',
+        pointRadius: 5,
+        tension: 0.4,
+        fill: true,
+        spanGaps: true,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { min: 0, max: 10, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#9e8f87' } },
+        x: { grid: { display: false }, ticks: { color: '#9e8f87' } }
+      }
+    }
+  });
+}
+
+function drawDistChart(moodCount) {
+  const ctx = document.getElementById('distChart').getContext('2d');
+  if (distChartInst) distChartInst.destroy();
+  const palette = ['#7c9e8f','#c4826a','#c49a4f','#9b8ec4','#5a9abf','#c47c8e','#8fc490','#c4b87c'];
+  const labels = Object.keys(moodCount);
+  const data = Object.values(moodCount);
+  distChartInst = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: palette.slice(0, labels.length),
+        borderWidth: 2,
+        borderColor: '#faf8f5',
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'right', labels: { color: '#6b5d56', font: { size: 13 }, padding: 12 } }
+      }
+    }
+  });
+}
+
+function drawEmptyCharts() {
+  const ctx1 = document.getElementById('moodChart').getContext('2d');
+  const ctx2 = document.getElementById('distChart').getContext('2d');
+  if (moodChartInst) moodChartInst.destroy();
+  if (distChartInst) distChartInst.destroy();
+  moodChartInst = new Chart(ctx1, { type: 'line', data: { labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], datasets: [{ data: [], borderColor: '#7c9e8f' }] }, options: { responsive: true, plugins: { legend: { display: false } } } });
+}
+
+function renderInsights(moodCount, avgIntensity) {
+  const container = document.getElementById('insights-list');
+  const insights = [];
+  const moods = Object.entries(moodCount).sort((a,b)=>b[1]-a[1]);
+  const topMood = moods[0]?.[0] || '';
+
+  if (['Anxious','Overwhelmed','Angry'].includes(topMood)) {
+    insights.push({ icon: '🌬️', bg: '#e8f4ef', title: 'Consider a breathing practice', text: 'Your logs show elevated stress moods. Even 3 minutes of deep breathing daily can gently lower your baseline anxiety over time.' });
+  }
+  if (['Happy','Peaceful','Grateful'].includes(topMood)) {
+    insights.push({ icon: '🌸', bg: '#fdf3ee', title: 'Beautiful emotional balance', text: 'Your recent logs reflect peaceful, positive energy. Nurture what brings you this state — those practices are working.' });
+  }
+  if (avgIntensity > 7) {
+    insights.push({ icon: '💧', bg: '#eef4fc', title: 'High intensity feelings detected', text: 'You\'ve been experiencing strong emotions. That\'s valid and understandable. Rest, water, and gentle movement can help regulate your system.' });
+  }
+  if (state.moodHistory.length >= 3) {
+    insights.push({ icon: '📈', bg: '#f5f0e8', title: 'You\'re building a practice', text: 'Consistent self-check-ins are one of the most powerful wellbeing habits. You\'re doing the quiet, important work.' });
+  }
+  insights.push({ icon: '🌱', bg: '#e8f5ed', title: 'Every feeling is information', text: 'Emotions are not problems to be solved — they\'re messengers. Listening to them with curiosity rather than judgment changes everything.' });
+
+  container.innerHTML = insights.map(ins => `
+    <div class="insight-card">
+      <div class="insight-icon" style="background:${ins.bg}">${ins.icon}</div>
+      <div class="insight-body"><h4>${ins.title}</h4><p>${ins.text}</p></div>
+    </div>
+  `).join('');
+}
+
+// ─── LONELY MODE ──────────────────────────────────────────────────────
+function openLonely() { document.getElementById('lonely-modal').classList.add('show'); }
+function closeLonely() { document.getElementById('lonely-modal').classList.remove('show'); }
+
+function startLonelyChat(type) {
+  closeLonely();
+  showPage('chat');
+  setTimeout(() => {
+    addQuickToChatAndSend(type === 'just talk'
+      ? "I feel really alone right now and just need someone to talk to"
+      : type === 'help me calm down'
+      ? "I'm struggling and need help calming down"
+      : type === 'remind me it will be okay'
+      ? "I'm going through something hard. Can you remind me it will be okay?"
+      : type);
+  }, 300);
+}
+
+// ─── BREATHING ────────────────────────────────────────────────────────
+let breathInterval = null;
+
+function startBreathing() {
+  closeLonely();
+  document.getElementById('breathing-overlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+  runBreathCycle();
+}
+
+function stopBreathing() {
+  clearTimeout(breathInterval);
+  document.getElementById('breathing-overlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+const BREATH_SEQUENCE = [
+  { phase: 'inhale', text: 'Breathe in...', duration: 4000, class: 'inhale' },
+  { phase: 'hold', text: 'Hold gently...', duration: 7000, class: 'hold' },
+  { phase: 'exhale', text: 'Breathe out slowly...', duration: 8000, class: 'exhale' },
+  { phase: 'rest', text: 'Rest...', duration: 2000, class: '' },
+];
+
+let breathStep = 0;
+let breathCountdown = null;
+
+function runBreathCycle() {
+  const step = BREATH_SEQUENCE[breathStep % BREATH_SEQUENCE.length];
+  const circle = document.getElementById('breath-circle');
+  const textEl = document.getElementById('breath-text');
+  const countEl = document.getElementById('breath-count');
+
+  circle.className = 'breathing-circle ' + step.class;
+  textEl.textContent = step.text;
+
+  const secs = step.duration / 1000;
+  let remaining = secs;
+  countEl.textContent = Math.ceil(remaining);
+
+  clearInterval(breathCountdown);
+  breathCountdown = setInterval(() => {
+    remaining -= 0.5;
+    countEl.textContent = Math.max(0, Math.ceil(remaining));
+  }, 500);
+
+  breathInterval = setTimeout(() => {
+    clearInterval(breathCountdown);
+    breathStep++;
+    runBreathCycle();
+  }, step.duration);
+}
+
+// ─── AI CALLS ─────────────────────────────────────────────────────────
+async function callCompanion(entry, type) {
+  const systemPrompt = `You are Serene, a deeply empathetic, wise, and warm emotional companion. You respond like a calm elder or trusted friend — never robotic, never clinical. Your tone is gentle, present, and human. You never judge. You always guide toward hope, clarity, and calm. Keep responses concise but deeply meaningful.
+
+When someone shares their mood, respond with:
+1. "message": A warm, human, empathetic response (2-3 sentences, first person, deeply present) — in the voice of a wise, kind friend. Use natural, gentle language.
+2. "affirmation": A single powerful, gentle affirmation or wisdom quote tailored to their mood (1-2 sentences).
+3. "suggestions": 2-3 gentle, actionable suggestions as short phrases (e.g., "Take a slow walk", "Write 3 things you're grateful for", "Drink some water and rest").
+
+Respond only in valid JSON format: { "message": "...", "affirmation": "...", "suggestions": ["...","...","..."] }`;
+
+  const userPrompt = `The user is feeling ${entry.mood} (intensity ${entry.intensity}/10).${entry.text ? ` They wrote: "${entry.text}"` : ''} Please respond with warmth and understanding.`;
+
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 1000,
+      system: systemPrompt,
+      messages: [{ role: "user", content: userPrompt }]
+    })
+  });
+  const data = await response.json();
+  const text = data.content.map(b => b.text || '').join('');
+  const clean = text.replace(/```json|```/g, '').trim();
+  return JSON.parse(clean);
+}
+
+async function callCompanionChat(userMessage) {
+  const systemPrompt = `You are Serene, a deeply empathetic, wise, and human-like emotional companion. You listen with your whole heart. You never give robotic or generic advice. You speak like a calm, caring elder or a deeply understanding friend.
+
+Core principles:
+- Never judge. Never minimize. Never be dismissive.
+- Validate before advising. Feel with the person first.
+- Be concise — meaningful, not lengthy.
+- Guide toward hope, clarity, calmness.
+- Occasionally share a piece of universal wisdom (not religious dogma) when it feels right.
+- If someone seems in crisis, gently encourage them to seek human support too.
+- Speak in warm, natural, flowing sentences. Never bullet points.
+- Vary your responses. Don't repeat the same phrases.
+
+Response format: JSON with "message" (your warm reply, 2-4 sentences) and "type" ("normal" or "wisdom" when sharing a quote/insight).`;
+
+  const messages = [
+    ...state.chatHistory.slice(-8).map(m => ({ role: m.role, content: m.content })),
+    { role: 'user', content: userMessage }
+  ];
+
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 1000,
+      system: systemPrompt,
+      messages
+    })
+  });
+  const data = await response.json();
+  const text = data.content.map(b => b.text || '').join('');
+  const clean = text.replace(/```json|```/g, '').trim();
+  return JSON.parse(clean);
+}
+
+async function callJournalReflection(journalText) {
+  const systemPrompt = `You are Serene. Someone has just written in their private journal. Offer a single, gentle, wise reflection on what they wrote — like a kind elder reading over their shoulder. 2 sentences max. No judgment. No advice unless asked. Just a warm, insightful mirror of what you noticed. Respond with only the reflection text, no JSON, no quotes.`;
+
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 200,
+      system: systemPrompt,
+      messages: [{ role: "user", content: journalText }]
+    })
+  });
+  const data = await response.json();
+  return data.content.map(b => b.text || '').join('').trim();
+}
+
+// ─── FALLBACKS (offline / error) ─────────────────────────────────────
+function getFallbackCheckinReply(entry) {
+  const responses = {
+    Happy: { message: "Your happiness warms this whole space. Hold onto this feeling — let it remind you what's possible.", affirmation: "You deserve every moment of joy that finds you.", suggestions: ["Share this feeling with someone you love", "Write down what made today good", "Sit with the warmth of this moment"] },
+    Sad: { message: "Thank you for trusting me with this. Sadness is not weakness — it's the heart's way of saying something mattered.", affirmation: "You are allowed to feel this. And you are not alone in it.", suggestions: ["Be gentle with yourself today", "Rest without guilt", "Let yourself cry if you need to"] },
+    Anxious: { message: "I hear you. Anxiety is exhausting, and the fact that you checked in shows real self-awareness and courage.", affirmation: "This feeling will pass. You have navigated difficulty before, and you will again.", suggestions: ["Try 4-7-8 breathing with me", "Step outside for fresh air", "Focus only on this one breath"] },
+    Angry: { message: "Your anger is valid. Something matters deeply to you — that's actually a sign of how much you care.", affirmation: "Let the feeling move through you without letting it define you.", suggestions: ["Write out what's bothering you", "Take a brisk walk", "Wait before responding to anything big"] },
+    Peaceful: { message: "This quiet peace you're feeling is precious. You've earned it. Rest in it fully.", affirmation: "Peace is your natural state. It will always return to you.", suggestions: ["Meditate or sit in silence", "Journal what created this peace", "Share your calm with someone who needs it"] },
+    Lonely: { message: "Loneliness is one of the most human of feelings. I want you to know: you are seen, and you matter.", affirmation: "Connection begins with your own compassionate heart. You are worthy of deep belonging.", suggestions: ["Reach out to one person today", "Write a letter you don't need to send", "Do something kind for yourself right now"] },
+  };
+  return responses[entry.mood] || { message: "Whatever you're carrying right now, you don't have to carry it alone. I'm here with you.", affirmation: "You are enough, exactly as you are in this moment.", suggestions: ["Take three slow breaths", "Have a glass of water", "Rest for a few minutes"] };
+}
+
+function getFallbackChatReply(text) {
+  const lower = text.toLowerCase();
+  if (lower.includes('alone') || lower.includes('lonely')) return "You reached out — that alone took courage. Loneliness can feel so heavy, but in this moment, you are not alone. I'm right here. Tell me more about what's happening for you.";
+  if (lower.includes('anxious') || lower.includes('worried') || lower.includes('scared')) return "I can hear the worry in your words. Let's slow down together for just a moment. Take one deep breath with me. What is the one thing that's weighing on you most right now?";
+  if (lower.includes('sad') || lower.includes('cry') || lower.includes('hurt')) return "Sadness has a way of making everything feel heavier. I want you to know — your feelings are real, they matter, and they are welcome here. What's been happening?";
+  if (lower.includes('angry') || lower.includes('frustrated') || lower.includes('mad')) return "Anger often points to something we deeply care about or a boundary that was crossed. That makes sense. What happened that brought this up for you?";
+  if (lower.includes('okay') || lower.includes('will it be okay')) return "Yes. I believe this with all my heart: it will be okay. Not because life is easy, but because you are still here, still trying, still reaching out. That means everything.";
+  return "I hear you, and I'm genuinely glad you're talking to me. Whatever is happening in your heart right now — it matters. Can you tell me a little more?";
+}
+
+// ─── UTILS ───────────────────────────────────────────────────────────
+function formatTime(iso) {
+  const d = new Date(iso);
+  const now = new Date();
+  const diff = now - d;
+  if (diff < 60000) return 'Just now';
+  if (diff < 3600000) return Math.floor(diff/60000) + 'm ago';
+  if (diff < 86400000) return Math.floor(diff/3600000) + 'h ago';
+  return d.toLocaleDateString('en', { month: 'short', day: 'numeric' });
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+let toastTimeout = null;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────
+loadState();
+
+// Close modals on overlay click
+document.getElementById('lonely-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeLonely();
+});
+
+// PWA service worker (basic offline caching)
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    const sw = `
+      self.addEventListener('install', e => e.waitUntil(
+        caches.open('serene-v1').then(c => c.addAll(['/']))
+      ));
+      self.addEventListener('fetch', e => e.respondWith(
+        caches.match(e.request).then(r => r || fetch(e.request))
+      ));
+    `;
+    const blob = new Blob([sw], { type: 'application/javascript' });
+    navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
