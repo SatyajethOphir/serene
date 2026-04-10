@@ -1,302 +1,704 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#f0ebe3">
-<title>Serene — Your Mindful Companion</title>
-<link rel="manifest" href="#" />
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #f7f3ee;
-    --bg2: #eee8df;
-    --bg3: #e5ddd2;
-    --surface: #faf8f5;
-    --surface2: #f2ece4;
-    --text: #2d2420;
-    --text2: #6b5d56;
-    --text3: #9e8f87;
-    --accent: #7c9e8f;
-    --accent2: #a8c5b5;
-    --accent3: #d4e8de;
-    --warm: #c4826a;
-    --warm2: #e8c4b4;
-    --warm3: #f5e8e0;
-    --gold: #c49a4f;
-    --gold2: #e8d5a8;
-    --gold3: #f8f0dc;
-    --border: rgba(100,80,60,0.12);
-    --border2: rgba(100,80,60,0.2);
-    --shadow: 0 2px 24px rgba(60,40,20,0.08);
-    --shadow2: 0 8px 40px rgba(60,40,20,0.12);
-    --r: 16px;
-    --r2: 24px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    background: rgba(247,243,238,0.92);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-    padding: 0 24px;
-    height: 60px;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .nav-brand { font-family: 'Lora', serif; font-size: 20px; font-weight: 600; color: var(--text); letter-spacing: -0.3px; }
-  .nav-brand span { color: var(--accent); }
-  .nav-tabs { display: flex; gap: 4px; }
-  .nav-tab { padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; background: transparent; color: var(--text2); transition: all 0.2s; }
-  .nav-tab:hover { background: var(--bg2); color: var(--text); }
-  .nav-tab.active { background: var(--accent); color: white; }
-  .nav-right { display: flex; align-items: center; gap: 8px; }
-  .btn-lonely { padding: 7px 16px; border-radius: 20px; background: var(--warm); color: white; border: none; cursor: pointer; font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
-  .btn-lonely:hover { background: #b3705a; transform: translateY(-1px); }
-  .pulse-dot { width: 7px; height: 7px; border-radius: 50%; background: #ff8a8a; animation: pulse 2s infinite; }
-  @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(1.3); } }
-  .page { display: none; padding-top: 60px; min-height: 100vh; }
-  .page.active { display: block; }
-  .container { max-width: 800px; margin: 0 auto; padding: 32px 24px; }
-  .home-header { text-align: center; padding: 48px 24px 32px; }
-  .home-header h1 { font-family: 'Lora', serif; font-size: 38px; font-weight: 600; color: var(--text); line-height: 1.2; margin-bottom: 12px; }
-  .home-header h1 em { color: var(--accent); font-style: italic; }
-  .home-header p { color: var(--text2); font-size: 16px; line-height: 1.7; max-width: 440px; margin: 0 auto; }
-  .mood-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r2); padding: 32px; box-shadow: var(--shadow); margin-bottom: 24px; }
-  .mood-card h2 { font-family: 'Lora', serif; font-size: 20px; font-weight: 500; margin-bottom: 24px; color: var(--text); }
-  .mood-label { font-size: 13px; font-weight: 500; color: var(--text2); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .emoji-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 24px; }
-  .emoji-btn { aspect-ratio: 1; border-radius: 14px; border: 2px solid var(--border); background: var(--surface2); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; transition: all 0.2s; padding: 8px 4px; }
-  .emoji-btn:hover { border-color: var(--accent2); background: var(--accent3); transform: translateY(-2px); }
-  .emoji-btn.selected { border-color: var(--accent); background: var(--accent3); box-shadow: 0 0 0 3px rgba(124,158,143,0.2); }
-  .emoji-btn .e { font-size: 22px; line-height: 1; }
-  .emoji-btn .el { font-size: 9px; color: var(--text3); font-weight: 500; text-align: center; line-height: 1.2; }
-  .slider-wrap { margin-bottom: 24px; }
-  .slider-row { display: flex; align-items: center; gap: 12px; }
-  input[type=range] { flex: 1; height: 4px; border-radius: 2px; background: var(--bg3); outline: none; border: none; -webkit-appearance: none; cursor: pointer; }
-  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); border: 3px solid white; box-shadow: 0 0 0 2px var(--accent); cursor: pointer; }
-  .slider-val { font-family: 'Lora', serif; font-size: 22px; font-weight: 600; color: var(--accent); min-width: 32px; text-align: right; }
-  .slider-labels { display: flex; justify-content: space-between; margin-top: 6px; }
-  .slider-labels span { font-size: 11px; color: var(--text3); }
-  textarea { width: 100%; padding: 14px 16px; border: 1px solid var(--border2); border-radius: var(--r); background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; line-height: 1.6; resize: none; outline: none; transition: border-color 0.2s; }
-  textarea:focus { border-color: var(--accent); }
-  textarea::placeholder { color: var(--text3); }
-  .btn-primary { display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px; border-radius: 24px; background: var(--accent); color: white; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; transition: all 0.2s; box-shadow: 0 4px 16px rgba(124,158,143,0.35); }
-  .btn-primary:hover { background: #6a8d7e; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,158,143,0.4); }
-  .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-  .btn-secondary { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 20px; background: transparent; color: var(--text2); border: 1px solid var(--border2); cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; transition: all 0.2s; }
-  .btn-secondary:hover { background: var(--bg2); color: var(--text); }
-  .suggestions-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
-  .suggestion-pill { padding: 7px 14px; border-radius: 20px; background: var(--gold3); color: var(--gold); border: 1px solid var(--gold2); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
-  .suggestion-pill:hover { background: var(--gold2); }
-  .companion-reply { background: linear-gradient(135deg, var(--surface) 0%, var(--warm3) 100%); border: 1px solid var(--warm2); border-radius: var(--r2); padding: 28px 32px; margin-top: 20px; display: none; animation: fadeSlide 0.4s ease; }
-  @keyframes fadeSlide { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-  .companion-reply.show { display: block; }
-  .companion-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 14px; color: white; }
-  .companion-name { font-size: 12px; font-weight: 500; color: var(--text3); margin-bottom: 4px; letter-spacing: 0.5px; }
-  .companion-text { font-family: 'Lora', serif; font-size: 16px; line-height: 1.8; color: var(--text); font-style: italic; }
-  .companion-affirmation { margin-top: 16px; padding: 12px 16px; background: rgba(124,158,143,0.12); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; font-size: 14px; color: var(--text2); line-height: 1.6; }
-  .loading-dots { display: flex; gap: 5px; align-items: center; padding: 8px 0; }
-  .loading-dots span { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); opacity: 0.4; animation: dot 1.2s infinite; }
-  .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
-  .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes dot { 0%,80%,100% { opacity: 0.2; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1.1); } }
-  .history-empty { text-align: center; padding: 48px; color: var(--text3); font-family: 'Lora', serif; font-style: italic; font-size: 16px; }
-  .mood-entry { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 18px 20px; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 14px; animation: fadeSlide 0.3s ease; }
-  .entry-emoji { font-size: 28px; line-height: 1; flex-shrink: 0; }
-  .entry-body { flex: 1; }
-  .entry-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-  .entry-mood { font-weight: 500; font-size: 15px; color: var(--text); }
-  .entry-time { font-size: 12px; color: var(--text3); }
-  .entry-text { font-size: 14px; color: var(--text2); line-height: 1.5; margin-bottom: 6px; }
-  .entry-intensity { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--accent); font-weight: 500; }
-  .intensity-bar { height: 4px; border-radius: 2px; background: var(--bg3); width: 60px; overflow: hidden; }
-  .intensity-fill { height: 100%; border-radius: 2px; background: var(--accent); }
-  .chat-wrap { display: flex; flex-direction: column; height: calc(100vh - 60px); max-width: 700px; margin: 0 auto; }
-  .chat-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
-  .companion-circle { width: 46px; height: 46px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; position: relative; }
-  .online-dot { position: absolute; bottom: 1px; right: 1px; width: 11px; height: 11px; border-radius: 50%; background: #4caf50; border: 2px solid var(--surface); }
-  .chat-header-info h3 { font-size: 16px; font-weight: 500; color: var(--text); }
-  .chat-header-info p { font-size: 12px; color: var(--accent); }
-  .chat-messages { flex: 1; overflow-y: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; scroll-behavior: smooth; }
-  .chat-messages::-webkit-scrollbar { width: 4px; }
-  .chat-messages::-webkit-scrollbar-track { background: transparent; }
-  .chat-messages::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 2px; }
-  .msg { max-width: 78%; display: flex; flex-direction: column; gap: 4px; }
-  .msg.user { align-self: flex-end; align-items: flex-end; }
-  .msg.ai { align-self: flex-start; }
-  .msg-bubble { padding: 12px 16px; border-radius: 18px; font-size: 15px; line-height: 1.65; }
-  .msg.user .msg-bubble { background: var(--accent); color: white; border-bottom-right-radius: 4px; }
-  .msg.ai .msg-bubble { background: var(--surface); border: 1px solid var(--border); color: var(--text); border-bottom-left-radius: 4px; font-family: 'Lora', serif; }
-  .msg-time { font-size: 11px; color: var(--text3); padding: 0 4px; }
-  .msg.ai .msg-bubble.wisdom { background: var(--gold3); border-color: var(--gold2); border-left: 3px solid var(--gold); }
-  .chat-input-row { padding: 16px 24px; background: var(--surface); border-top: 1px solid var(--border); display: flex; gap: 10px; align-items: flex-end; flex-shrink: 0; }
-  .chat-textarea { flex: 1; padding: 12px 16px; border: 1px solid var(--border2); border-radius: 24px; background: var(--bg); font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--text); outline: none; resize: none; min-height: 44px; max-height: 120px; line-height: 1.5; overflow-y: auto; }
-  .chat-textarea:focus { border-color: var(--accent); }
-  .chat-send { width: 44px; height: 44px; border-radius: 50%; background: var(--accent); color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.2s; flex-shrink: 0; }
-  .chat-send:hover { background: #6a8d7e; transform: scale(1.05); }
-  .voice-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--bg2); color: var(--text2); border: 1px solid var(--border2); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.2s; flex-shrink: 0; }
-  .voice-btn:hover { background: var(--bg3); }
-  .voice-btn.listening { background: #ff6b6b20; border-color: #ff6b6b; color: #ff6b6b; animation: pulse2 1s infinite; }
-  @keyframes pulse2 { 0%,100% { box-shadow: 0 0 0 0 rgba(255,107,107,0.3); } 50% { box-shadow: 0 0 0 8px rgba(255,107,107,0); } }
-  .quick-prompts { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 24px 12px; flex-shrink: 0; }
-  .qp { padding: 6px 14px; border-radius: 20px; background: var(--bg2); color: var(--text2); border: 1px solid var(--border); font-size: 13px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
-  .qp:hover { background: var(--accent3); color: var(--text); border-color: var(--accent2); }
-  .journal-compose { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r2); padding: 28px; margin-bottom: 24px; box-shadow: var(--shadow); }
-  .journal-compose h2 { font-family: 'Lora', serif; font-size: 20px; font-weight: 500; margin-bottom: 20px; }
-  .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
-  .emotion-tag { padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border2); background: var(--surface2); color: var(--text2); font-size: 12px; cursor: pointer; transition: all 0.2s; }
-  .emotion-tag:hover { border-color: var(--accent); color: var(--accent); }
-  .emotion-tag.selected { background: var(--accent); color: white; border-color: var(--accent); }
-  .journal-entry-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 20px; margin-bottom: 12px; animation: fadeSlide 0.3s ease; cursor: pointer; transition: box-shadow 0.2s; }
-  .journal-entry-card:hover { box-shadow: var(--shadow); }
-  .je-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-  .je-tags { display: flex; gap: 5px; flex-wrap: wrap; }
-  .je-tag { padding: 3px 9px; border-radius: 12px; font-size: 11px; font-weight: 500; background: var(--accent3); color: var(--accent); }
-  .je-date { font-size: 12px; color: var(--text3); }
-  .je-text { font-size: 14px; color: var(--text2); line-height: 1.6; margin-bottom: 8px; }
-  .je-reflection { padding: 10px 14px; background: var(--gold3); border-left: 2px solid var(--gold); border-radius: 0 8px 8px 0; font-size: 13px; color: var(--text2); line-height: 1.5; font-style: italic; margin-top: 8px; }
-  .analytics-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
-  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 20px; }
-  .stat-label { font-size: 12px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
-  .stat-value { font-family: 'Lora', serif; font-size: 32px; font-weight: 600; color: var(--text); line-height: 1; }
-  .stat-sub { font-size: 13px; color: var(--text2); margin-top: 6px; }
-  .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r2); padding: 24px; margin-bottom: 20px; }
-  .chart-card h3 { font-family: 'Lora', serif; font-size: 17px; font-weight: 500; margin-bottom: 20px; color: var(--text); }
-  canvas { width: 100% !important; }
-  .insight-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 18px 20px; margin-bottom: 12px; display: flex; gap: 14px; align-items: flex-start; }
-  .insight-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
-  .insight-body h4 { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
-  .insight-body p { font-size: 13px; color: var(--text2); line-height: 1.5; }
-  .modal-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(30,20,10,0.6); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; padding: 24px; }
-  .modal-overlay.show { display: flex; }
-  .lonely-modal { background: var(--surface); border-radius: 28px; padding: 40px; max-width: 480px; width: 100%; box-shadow: var(--shadow2); animation: modalIn 0.4s cubic-bezier(0.34,1.56,0.64,1); text-align: center; }
-  @keyframes modalIn { from { opacity: 0; transform: scale(0.85) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-  .lonely-heart { font-size: 52px; margin-bottom: 16px; animation: heartbeat 2s ease-in-out infinite; }
-  @keyframes heartbeat { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
-  .lonely-modal h2 { font-family: 'Lora', serif; font-size: 26px; font-weight: 500; color: var(--text); margin-bottom: 10px; }
-  .lonely-modal p { font-size: 15px; color: var(--text2); line-height: 1.7; margin-bottom: 24px; }
-  .lonely-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-  .lonely-opt { padding: 14px 20px; border-radius: 14px; border: 1px solid var(--border2); background: var(--bg); cursor: pointer; text-align: left; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
-  .lonely-opt:hover { border-color: var(--accent); background: var(--accent3); }
-  .lonely-opt-title { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
-  .lonely-opt-desc { font-size: 13px; color: var(--text2); }
-  .close-modal { background: none; border: none; cursor: pointer; color: var(--text3); font-size: 24px; float: right; margin: -20px -20px 0 0; line-height: 1; }
-  .breathing-overlay { position: fixed; inset: 0; z-index: 300; background: #1a2a22; display: none; align-items: center; justify-content: center; flex-direction: column; }
-  .breathing-overlay.show { display: flex; }
-  .breathing-circle { width: 200px; height: 200px; border-radius: 50%; background: rgba(124,158,143,0.15); border: 2px solid rgba(124,158,143,0.3); display: flex; align-items: center; justify-content: center; margin-bottom: 32px; }
-  .breathing-circle.inhale { animation: inhale 4s ease-in-out forwards; }
-  .breathing-circle.hold { border-color: rgba(200,168,80,0.5); }
-  .breathing-circle.exhale { animation: exhale 4s ease-in-out forwards; }
-  @keyframes inhale { to { transform: scale(1.5); background: rgba(124,158,143,0.3); } }
-  @keyframes exhale { from { transform: scale(1.5); } to { transform: scale(1); } }
-  .breathing-text { color: white; font-family: 'Lora', serif; font-size: 24px; text-align: center; margin-bottom: 12px; }
-  .breathing-sub { color: rgba(255,255,255,0.5); font-size: 15px; text-align: center; }
-  .breathing-count { font-size: 48px; font-weight: 300; color: var(--accent2); font-family: 'Lora', serif; margin-bottom: 8px; }
-  .exit-breath { position: absolute; top: 24px; right: 24px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 14px; }
-  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--text); color: white; padding: 12px 24px; border-radius: 24px; font-size: 14px; z-index: 1000; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
-  .toast.show { opacity: 1; }
-  @media (max-width: 600px) { .analytics-grid { grid-template-columns: 1fr; } .emoji-grid { grid-template-columns: repeat(4, 1fr); } nav .nav-tabs .nav-tab .tab-label { display: none; } .home-header h1 { font-size: 28px; } }
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 3px; }
-  .section-title { font-family: 'Lora', serif; font-size: 22px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
-  .section-sub { font-size: 14px; color: var(--text2); margin-bottom: 24px; }
-  .wisdom-banner { background: var(--gold3); border: 1px solid var(--gold2); border-radius: var(--r2); padding: 24px 28px; margin-bottom: 24px; position: relative; overflow: hidden; }
-  .wisdom-banner::before { content: '"'; position: absolute; top: -10px; left: 16px; font-family: 'Lora', serif; font-size: 80px; color: var(--gold2); line-height: 1; pointer-events: none; }
-  .wisdom-text { font-family: 'Lora', serif; font-size: 17px; font-style: italic; color: var(--text); line-height: 1.7; margin-bottom: 8px; padding-left: 20px; }
-  .wisdom-source { font-size: 13px; color: var(--gold); padding-left: 20px; }
-</style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="theme-color" content="#eef6ff"/>
+  <title>Serene — Your Mindful Companion</title>
+  <link rel="manifest" href="#"/>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    /* ═══════════════════════════════════════════
+       HOPEFUL COLOR PALETTE
+       Sky · Mint · Sunrise · Sunshine · Soft White
+    ═══════════════════════════════════════════ */
+    :root {
+      /* Backgrounds */
+      --bg:       #eef6ff;   /* soft sky white */
+      --bg2:      #daeeff;   /* light sky */
+      --bg3:      #c0dff8;   /* muted sky */
+
+      /* Surfaces */
+      --surface:  #f8fcff;
+      --surface2: #edf6ff;
+
+      /* Text */
+      --text:     #1a3550;   /* deep ocean */
+      --text2:    #3d6080;   /* mid ocean */
+      --text3:    #7da3c0;   /* muted sky */
+
+      /* Primary accent — sky blue */
+      --accent:   #4a9fd4;
+      --accent2:  #89c4e8;
+      --accent3:  #d4edf9;
+
+      /* Warmth — sunrise orange */
+      --warm:     #f0895a;
+      --warm2:    #f8c4a8;
+      --warm3:    #fff0e8;
+
+      /* Sunshine — golden yellow */
+      --gold:     #e8a820;
+      --gold2:    #fada8c;
+      --gold3:    #fffae8;
+
+      /* Mint — fresh hope */
+      --mint:     #3db89a;
+      --mint2:    #8ad8c6;
+      --mint3:    #e0f6f1;
+
+      /* Lavender — calm */
+      --lav:      #8e7dd4;
+      --lav2:     #c3b9f0;
+      --lav3:     #ede9fc;
+
+      /* Rose — gentle */
+      --rose:     #e07090;
+      --rose2:    #f2b8ca;
+      --rose3:    #fdeef3;
+
+      /* Structure */
+      --border:   rgba(74,159,212,0.13);
+      --border2:  rgba(74,159,212,0.22);
+      --shadow:   0 2px 24px rgba(26,53,80,0.07);
+      --shadow2:  0 8px 40px rgba(26,53,80,0.13);
+      --r:        16px;
+      --r2:       24px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "DM Sans", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(238,246,255,0.93);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 20px; height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px;
+    }
+    .nav-brand {
+      font-family: "Lora", serif; font-size: 20px; font-weight: 600;
+      color: var(--text); letter-spacing: -0.3px; flex-shrink: 0;
+    }
+    .nav-brand span { color: var(--accent); }
+    .nav-tabs { display: flex; gap: 3px; overflow-x: auto; scrollbar-width: none; }
+    .nav-tabs::-webkit-scrollbar { display: none; }
+    .nav-tab {
+      padding: 6px 13px; border-radius: 20px; font-size: 13px; font-weight: 500;
+      cursor: pointer; border: none; background: transparent; color: var(--text2);
+      transition: all 0.2s; white-space: nowrap; font-family: "DM Sans", sans-serif;
+    }
+    .nav-tab:hover { background: var(--bg2); color: var(--text); }
+    .nav-tab.active { background: var(--accent); color: white; }
+    .nav-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .btn-lonely {
+      padding: 7px 14px; border-radius: 20px;
+      background: linear-gradient(135deg, var(--warm), #e06840);
+      color: white; border: none; cursor: pointer;
+      font-size: 13px; font-weight: 500; font-family: "DM Sans", sans-serif;
+      transition: all 0.2s; display: flex; align-items: center; gap: 6px;
+      white-space: nowrap;
+    }
+    .btn-lonely:hover { transform: translateY(-1px); filter: brightness(1.08); }
+    .pulse-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: #ffb8b8;
+      animation: pulse 2s infinite; flex-shrink: 0;
+    }
+    @keyframes pulse {
+      0%,100% { opacity:1; transform:scale(1); }
+      50% { opacity:0.6; transform:scale(1.3); }
+    }
+
+    /* ── PAGES ── */
+    .page { display: none; padding-top: 60px; min-height: 100vh; }
+    .page.active { display: block; }
+    .container { max-width: 800px; margin: 0 auto; padding: 28px 20px; }
+
+    /* ── HOME HEADER ── */
+    .home-header { text-align: center; padding: 36px 20px 28px; }
+    .home-header h1 {
+      font-family: "Lora", serif; font-size: clamp(26px, 5vw, 38px);
+      font-weight: 600; color: var(--text); line-height: 1.22; margin-bottom: 12px;
+    }
+    .home-header h1 em { color: var(--accent); font-style: italic; }
+    .home-header p { color: var(--text2); font-size: 15px; line-height: 1.7; max-width: 420px; margin: 0 auto; }
+
+    /* ── WISDOM BANNER ── */
+    .wisdom-banner {
+      background: linear-gradient(135deg, var(--gold3), #fff8e0);
+      border: 1px solid var(--gold2); border-radius: var(--r2);
+      padding: 22px 26px; margin-bottom: 22px;
+      position: relative; overflow: hidden;
+    }
+    .wisdom-banner::before {
+      content: '"'; position: absolute; top: -14px; left: 14px;
+      font-family: "Lora", serif; font-size: 90px; color: var(--gold2);
+      line-height: 1; pointer-events: none;
+    }
+    .wisdom-text {
+      font-family: "Lora", serif; font-size: 16px; font-style: italic;
+      color: var(--text); line-height: 1.75; margin-bottom: 7px; padding-left: 18px;
+    }
+    .wisdom-source { font-size: 13px; color: var(--gold); padding-left: 18px; }
+
+    /* ── MOOD CARD ── */
+    .mood-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r2); padding: clamp(20px,4vw,32px);
+      box-shadow: var(--shadow); margin-bottom: 22px;
+    }
+    .mood-card h2 {
+      font-family: "Lora", serif; font-size: 19px; font-weight: 500;
+      margin-bottom: 8px; color: var(--text);
+    }
+    .mood-card h2 span { font-size: 13px; color: var(--text3); font-family: "DM Sans",sans-serif; font-weight: 400; margin-left: 6px; }
+    .mood-label {
+      font-size: 12px; font-weight: 500; color: var(--text2); margin-bottom: 11px;
+      text-transform: uppercase; letter-spacing: 0.6px;
+    }
+
+    /* ── MULTI-MOOD CHIP ── */
+    .selected-moods-bar {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      min-height: 20px; margin-bottom: 14px;
+    }
+    .mood-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 12px 4px 10px; border-radius: 50px;
+      font-size: 13px; font-weight: 500;
+      background: var(--accent3); color: var(--accent);
+      border: 1.5px solid var(--accent2);
+      animation: chipIn 0.2s cubic-bezier(.34,1.56,.64,1);
+    }
+    @keyframes chipIn {
+      from { transform: scale(0.7); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+    .mood-chip-remove {
+      cursor: pointer; font-size: 14px; opacity: 0.6;
+      line-height: 1; background: none; border: none;
+      color: var(--accent); font-family: sans-serif;
+    }
+    .mood-chip-remove:hover { opacity: 1; }
+    .multi-hint {
+      font-size: 12px; color: var(--text3); margin-bottom: 12px;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .multi-hint::before {
+      content: '✦'; color: var(--accent); font-size: 10px;
+    }
+
+    /* ── EMOJI GRID ── */
+    .emoji-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 7px; margin-bottom: 22px;
+    }
+    .emoji-btn {
+      aspect-ratio: 1; border-radius: 13px;
+      border: 2px solid var(--border);
+      background: var(--surface2); cursor: pointer;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 3px;
+      transition: all 0.18s; padding: 6px 3px;
+      position: relative;
+    }
+    .emoji-btn:hover { border-color: var(--accent2); background: var(--accent3); transform: translateY(-2px); }
+    .emoji-btn.selected {
+      border-color: var(--accent); background: var(--accent3);
+      box-shadow: 0 0 0 3px rgba(74,159,212,0.18);
+      transform: translateY(-2px) scale(1.04);
+    }
+    .emoji-btn .check-badge {
+      position: absolute; top: -5px; right: -5px;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: var(--accent); border: 2px solid white;
+      display: none; align-items: center; justify-content: center;
+      font-size: 8px; color: white; font-weight: 700;
+    }
+    .emoji-btn.selected .check-badge { display: flex; }
+    .emoji-btn .e { font-size: 21px; line-height: 1; }
+    .emoji-btn .el { font-size: 9px; color: var(--text3); font-weight: 500; text-align: center; line-height: 1.2; }
+    .emoji-btn.selected .el { color: var(--accent); }
+
+    /* ── SLIDER ── */
+    .slider-wrap { margin-bottom: 22px; }
+    .slider-row { display: flex; align-items: center; gap: 10px; }
+    input[type="range"] {
+      flex: 1; height: 5px; border-radius: 3px;
+      background: linear-gradient(to right, var(--accent) 0%, var(--accent) 50%, var(--bg3) 50%, var(--bg3) 100%);
+      outline: none; border: none; -webkit-appearance: none; cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%;
+      background: var(--accent); border: 3px solid white;
+      box-shadow: 0 0 0 2px var(--accent2); cursor: pointer;
+    }
+    .slider-val {
+      font-family: "Lora", serif; font-size: 22px; font-weight: 600;
+      color: var(--accent); min-width: 32px; text-align: right;
+    }
+    .slider-labels { display: flex; justify-content: space-between; margin-top: 6px; }
+    .slider-labels span { font-size: 11px; color: var(--text3); }
+
+    /* ── TEXTAREA ── */
+    textarea {
+      width: 100%; padding: 13px 15px;
+      border: 1px solid var(--border2); border-radius: var(--r);
+      background: var(--bg); color: var(--text);
+      font-family: "DM Sans", sans-serif; font-size: 14.5px;
+      line-height: 1.65; resize: none; outline: none;
+      transition: border-color 0.2s;
+    }
+    textarea:focus { border-color: var(--accent); background: var(--surface); }
+    textarea::placeholder { color: var(--text3); }
+
+    /* ── BUTTONS ── */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 26px; border-radius: 24px;
+      background: linear-gradient(135deg, var(--accent), #2e85bb);
+      color: white; border: none; cursor: pointer;
+      font-family: "DM Sans", sans-serif; font-size: 14.5px; font-weight: 500;
+      transition: all 0.2s;
+      box-shadow: 0 4px 16px rgba(74,159,212,0.35);
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 22px rgba(74,159,212,0.4); filter: brightness(1.06); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 20px; border-radius: 20px; background: transparent;
+      color: var(--text2); border: 1px solid var(--border2); cursor: pointer;
+      font-family: "DM Sans", sans-serif; font-size: 14px; font-weight: 500; transition: all 0.2s;
+    }
+    .btn-secondary:hover { background: var(--bg2); color: var(--text); }
+
+    /* ── SUGGESTIONS ── */
+    .suggestions-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .suggestion-pill {
+      padding: 7px 14px; border-radius: 20px;
+      background: var(--gold3); color: var(--gold);
+      border: 1px solid var(--gold2); font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: all 0.2s; font-family: "DM Sans", sans-serif;
+    }
+    .suggestion-pill:hover { background: var(--gold2); }
+
+    /* ── COMPANION REPLY ── */
+    .companion-reply {
+      background: linear-gradient(135deg, var(--mint3) 0%, var(--accent3) 100%);
+      border: 1px solid var(--mint2); border-radius: var(--r2);
+      padding: 26px 28px; margin-top: 18px; display: none;
+      animation: fadeSlide 0.4s ease;
+    }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .companion-reply.show { display: block; }
+    .companion-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--mint));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; margin-bottom: 13px; color: white;
+    }
+    .companion-name { font-size: 11.5px; font-weight: 500; color: var(--text3); margin-bottom: 4px; letter-spacing: 0.6px; }
+    .companion-text { font-family: "Lora", serif; font-size: 16px; line-height: 1.8; color: var(--text); font-style: italic; }
+    .companion-affirmation {
+      margin-top: 15px; padding: 12px 15px;
+      background: rgba(74,159,212,0.1); border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0; font-size: 14px; color: var(--text2); line-height: 1.6;
+    }
+
+    /* ── MOOD TAGS SUMMARY (in companion reply) ── */
+    .checkin-moods-summary {
+      display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px;
+    }
+    .csm-tag {
+      padding: 3px 10px; border-radius: 20px;
+      font-size: 12px; font-weight: 500;
+      background: rgba(74,159,212,0.12); color: var(--accent);
+      border: 1px solid rgba(74,159,212,0.2);
+    }
+
+    /* ── LOADING DOTS ── */
+    .loading-dots { display: flex; gap: 5px; align-items: center; padding: 8px 0; }
+    .loading-dots span {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--accent); opacity: 0.4; animation: dot 1.2s infinite;
+    }
+    .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes dot {
+      0%,80%,100% { opacity:0.2; transform:scale(0.8); }
+      40% { opacity:1; transform:scale(1.1); }
+    }
+
+    /* ── HISTORY ── */
+    .history-empty {
+      text-align: center; padding: 44px; color: var(--text3);
+      font-family: "Lora", serif; font-style: italic; font-size: 15.5px;
+    }
+    .mood-entry {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 16px 18px; margin-bottom: 11px;
+      display: flex; align-items: flex-start; gap: 12px;
+      animation: fadeSlide 0.3s ease;
+    }
+    .entry-emojis { font-size: 22px; line-height: 1; flex-shrink: 0; display: flex; flex-wrap: wrap; gap: 3px; max-width: 80px; }
+    .entry-body { flex: 1; min-width: 0; }
+    .entry-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; gap: 8px; }
+    .entry-mood { font-weight: 500; font-size: 14.5px; color: var(--text); }
+    .entry-mood-multi { display: flex; flex-wrap: wrap; gap: 4px; }
+    .entry-mood-tag {
+      padding: 2px 9px; border-radius: 12px; font-size: 11.5px;
+      background: var(--accent3); color: var(--accent); font-weight: 500;
+    }
+    .entry-time { font-size: 11.5px; color: var(--text3); flex-shrink: 0; }
+    .entry-text { font-size: 13.5px; color: var(--text2); line-height: 1.5; margin-bottom: 6px; }
+    .entry-intensity {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 12px; color: var(--accent); font-weight: 500;
+    }
+    .intensity-bar { height: 4px; border-radius: 2px; background: var(--bg3); width: 56px; overflow: hidden; }
+    .intensity-fill { height: 100%; border-radius: 2px; background: linear-gradient(to right, var(--accent), var(--mint)); }
+
+    /* ── CHAT ── */
+    .chat-wrap { display: flex; flex-direction: column; height: calc(100vh - 60px); max-width: 700px; margin: 0 auto; }
+    .chat-header {
+      padding: 18px 22px 14px; border-bottom: 1px solid var(--border);
+      background: var(--surface); display: flex; align-items: center; gap: 13px; flex-shrink: 0;
+    }
+    .companion-circle {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--mint));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 19px; color: white; position: relative; flex-shrink: 0;
+    }
+    .online-dot {
+      position: absolute; bottom: 1px; right: 1px; width: 11px; height: 11px;
+      border-radius: 50%; background: #4ade80; border: 2px solid var(--surface);
+    }
+    .chat-header-info h3 { font-size: 15.5px; font-weight: 500; color: var(--text); }
+    .chat-header-info p { font-size: 12px; color: var(--accent); }
+    .chat-messages {
+      flex: 1; overflow-y: auto; padding: 18px 22px;
+      display: flex; flex-direction: column; gap: 14px; scroll-behavior: smooth;
+    }
+    .chat-messages::-webkit-scrollbar { width: 4px; }
+    .chat-messages::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 2px; }
+    .msg { max-width: 80%; display: flex; flex-direction: column; gap: 3px; }
+    .msg.user { align-self: flex-end; align-items: flex-end; }
+    .msg.ai   { align-self: flex-start; }
+    .msg-bubble { padding: 11px 15px; border-radius: 18px; font-size: 14.5px; line-height: 1.65; }
+    .msg.user .msg-bubble {
+      background: linear-gradient(135deg, var(--accent), #2e85bb);
+      color: white; border-bottom-right-radius: 4px;
+    }
+    .msg.ai .msg-bubble {
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text); border-bottom-left-radius: 4px; font-family: "Lora", serif;
+    }
+    .msg.ai .msg-bubble.wisdom { background: var(--gold3); border-color: var(--gold2); border-left: 3px solid var(--gold); }
+    .msg-time { font-size: 10.5px; color: var(--text3); padding: 0 4px; }
+    .quick-prompts { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 22px 10px; flex-shrink: 0; }
+    .qp {
+      padding: 6px 13px; border-radius: 20px; background: var(--bg2);
+      color: var(--text2); border: 1px solid var(--border); font-size: 12.5px;
+      cursor: pointer; transition: all 0.2s; white-space: nowrap;
+      font-family: "DM Sans", sans-serif;
+    }
+    .qp:hover { background: var(--accent3); color: var(--text); border-color: var(--accent2); }
+    .chat-input-row {
+      padding: 13px 20px; background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex; gap: 9px; align-items: flex-end; flex-shrink: 0;
+    }
+    .chat-textarea {
+      flex: 1; padding: 11px 15px; border: 1px solid var(--border2);
+      border-radius: 24px; background: var(--bg);
+      font-family: "DM Sans", sans-serif; font-size: 14.5px; color: var(--text);
+      outline: none; resize: none; min-height: 44px; max-height: 120px;
+      line-height: 1.5; overflow-y: auto;
+    }
+    .chat-textarea:focus { border-color: var(--accent); }
+    .chat-send {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--mint));
+      color: white; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; transition: all 0.2s; flex-shrink: 0;
+    }
+    .chat-send:hover { transform: scale(1.06); filter: brightness(1.1); }
+    .voice-btn {
+      width: 44px; height: 44px; border-radius: 50%; background: var(--bg2);
+      color: var(--text2); border: 1px solid var(--border2); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; transition: all 0.2s; flex-shrink: 0;
+    }
+    .voice-btn:hover { background: var(--bg3); }
+    .voice-btn.listening { background: rgba(240,137,90,0.15); border-color: var(--warm); color: var(--warm); animation: pulse2 1s infinite; }
+    @keyframes pulse2 {
+      0%,100% { box-shadow: 0 0 0 0 rgba(240,137,90,0.3); }
+      50%      { box-shadow: 0 0 0 8px rgba(240,137,90,0); }
+    }
+
+    /* ── JOURNAL ── */
+    .journal-compose {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r2); padding: clamp(20px,4vw,28px);
+      margin-bottom: 22px; box-shadow: var(--shadow);
+    }
+    .journal-compose h2 { font-family: "Lora", serif; font-size: 19px; font-weight: 500; margin-bottom: 18px; }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+    .emotion-tag {
+      padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border2);
+      background: var(--surface2); color: var(--text2); font-size: 12.5px;
+      cursor: pointer; transition: all 0.2s; font-family: "DM Sans", sans-serif;
+    }
+    .emotion-tag:hover { border-color: var(--accent); color: var(--accent); }
+    .emotion-tag.selected { background: var(--accent); color: white; border-color: var(--accent); }
+    .journal-entry-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 18px; margin-bottom: 11px;
+      animation: fadeSlide 0.3s ease; cursor: pointer; transition: box-shadow 0.2s;
+    }
+    .journal-entry-card:hover { box-shadow: var(--shadow); }
+    .je-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 9px; flex-wrap: wrap; gap: 6px; }
+    .je-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+    .je-tag { padding: 3px 9px; border-radius: 12px; font-size: 11px; font-weight: 500; background: var(--accent3); color: var(--accent); }
+    .je-date { font-size: 12px; color: var(--text3); }
+    .je-text { font-size: 14px; color: var(--text2); line-height: 1.6; margin-bottom: 8px; }
+    .je-reflection {
+      padding: 10px 14px; background: var(--mint3);
+      border-left: 2px solid var(--mint); border-radius: 0 8px 8px 0;
+      font-size: 13px; color: var(--text2); line-height: 1.55; font-style: italic; margin-top: 8px;
+    }
+
+    /* ── ANALYTICS ── */
+    .analytics-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; margin-bottom: 22px; }
+    .stat-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 18px;
+    }
+    .stat-label { font-size: 11.5px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 7px; }
+    .stat-value { font-family: "Lora", serif; font-size: 30px; font-weight: 600; color: var(--text); line-height: 1; }
+    .stat-sub { font-size: 12.5px; color: var(--text2); margin-top: 6px; }
+    .chart-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r2); padding: 22px; margin-bottom: 18px;
+    }
+    .chart-card h3 { font-family: "Lora", serif; font-size: 16.5px; font-weight: 500; margin-bottom: 18px; color: var(--text); }
+    canvas { width: 100% !important; }
+    .insight-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 16px 18px; margin-bottom: 11px;
+      display: flex; gap: 13px; align-items: flex-start;
+    }
+    .insight-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .insight-body h4 { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+    .insight-body p { font-size: 13px; color: var(--text2); line-height: 1.55; }
+
+    /* ── LONELY MODAL ── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(20, 40, 70, 0.55); backdrop-filter: blur(5px);
+      display: none; align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-overlay.show { display: flex; }
+    .lonely-modal {
+      background: var(--surface); border-radius: 28px; padding: clamp(28px,5vw,40px);
+      max-width: 480px; width: 100%; box-shadow: var(--shadow2);
+      animation: modalIn 0.38s cubic-bezier(0.34,1.56,0.64,1); text-align: center;
+    }
+    @keyframes modalIn {
+      from { opacity:0; transform:scale(0.85) translateY(20px); }
+      to   { opacity:1; transform:scale(1) translateY(0); }
+    }
+    .lonely-heart { font-size: 50px; margin-bottom: 15px; animation: heartbeat 2s ease-in-out infinite; }
+    @keyframes heartbeat {
+      0%,100% { transform: scale(1); }
+      50% { transform: scale(1.09); }
+    }
+    .lonely-modal h2 { font-family: "Lora", serif; font-size: clamp(20px,4vw,25px); font-weight: 500; color: var(--text); margin-bottom: 10px; }
+    .lonely-modal > p { font-size: 14.5px; color: var(--text2); line-height: 1.7; margin-bottom: 22px; }
+    .lonely-options { display: flex; flex-direction: column; gap: 9px; margin-bottom: 18px; }
+    .lonely-opt {
+      padding: 13px 18px; border-radius: 14px; border: 1px solid var(--border2);
+      background: var(--bg); cursor: pointer; text-align: left; transition: all 0.2s;
+      font-family: "DM Sans", sans-serif;
+    }
+    .lonely-opt:hover { border-color: var(--accent); background: var(--accent3); }
+    .lonely-opt-title { font-size: 14.5px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+    .lonely-opt-desc  { font-size: 12.5px; color: var(--text2); }
+    .close-modal { background: none; border: none; cursor: pointer; color: var(--text3); font-size: 24px; float: right; margin: -16px -16px 0 0; line-height: 1; }
+
+    /* ── BREATHING ── */
+    .breathing-overlay {
+      position: fixed; inset: 0; z-index: 300;
+      background: linear-gradient(160deg, #0d2137 0%, #0a2e40 50%, #0d2b1e 100%);
+      display: none; align-items: center; justify-content: center; flex-direction: column;
+    }
+    .breathing-overlay.show { display: flex; }
+    .breathing-circle {
+      width: 200px; height: 200px; border-radius: 50%;
+      background: rgba(74,159,212,0.12); border: 2px solid rgba(74,159,212,0.3);
+      display: flex; align-items: center; justify-content: center; margin-bottom: 30px;
+    }
+    .breathing-circle.inhale { animation: inhale 4s ease-in-out forwards; }
+    .breathing-circle.hold   { border-color: rgba(232,168,32,0.45); }
+    .breathing-circle.exhale { animation: exhale 4s ease-in-out forwards; }
+    @keyframes inhale { to { transform: scale(1.5); background: rgba(74,159,212,0.26); } }
+    @keyframes exhale { from { transform: scale(1.5); } to { transform: scale(1); } }
+    .breathing-text { color: white; font-family: "Lora", serif; font-size: 23px; text-align: center; margin-bottom: 10px; }
+    .breathing-sub  { color: rgba(255,255,255,0.45); font-size: 14px; text-align: center; }
+    .breathing-count { font-size: 46px; font-weight: 300; color: var(--accent2); font-family: "Lora", serif; margin-bottom: 8px; }
+    .exit-breath {
+      position: absolute; top: 22px; right: 22px;
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.18);
+      color: white; padding: 7px 15px; border-radius: 20px; cursor: pointer;
+      font-family: "DM Sans", sans-serif; font-size: 13.5px;
+    }
+
+    /* ── SECTION TITLES ── */
+    .section-title { font-family: "Lora", serif; font-size: 21px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+    .section-sub   { font-size: 14px; color: var(--text2); margin-bottom: 22px; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+      background: var(--text); color: white; padding: 11px 22px;
+      border-radius: 24px; font-size: 14px; z-index: 1000;
+      opacity: 0; transition: opacity 0.3s; pointer-events: none; white-space: nowrap;
+    }
+    .toast.show { opacity: 1; }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 3px; }
+
+    /* ══ RESPONSIVE ══ */
+    @media (max-width: 640px) {
+      .analytics-grid { grid-template-columns: 1fr; }
+      .emoji-grid { grid-template-columns: repeat(4, 1fr); }
+      .nav-tab .tab-label { display: none; }
+      .btn-lonely span.lonely-label { display: none; }
+      .nav { padding: 0 12px; gap: 8px; }
+      .mood-card { padding: 18px; }
+      .chat-header { padding: 14px 16px 12px; }
+      .chat-messages { padding: 14px 16px; }
+      .chat-input-row { padding: 10px 14px; }
+      .quick-prompts { padding: 0 14px 8px; }
+      .lonely-modal { padding: 24px 20px; }
+    }
+    @media (max-width: 400px) {
+      .emoji-grid { grid-template-columns: repeat(3, 1fr); }
+      .emoji-btn .el { display: none; }
+    }
+  </style>
 </head>
 <body>
 
+<!-- ═══════ NAV ═══════ -->
 <nav>
   <div class="nav-brand">S<span>e</span>rene</div>
   <div class="nav-tabs">
-    <button class="nav-tab active" onclick="showPage('home')" id="tab-home"><span>✿</span> <span class="tab-label">Today</span></button>
-    <button class="nav-tab" onclick="showPage('chat')" id="tab-chat"><span>⌁</span> <span class="tab-label">Talk</span></button>
-    <button class="nav-tab" onclick="showPage('journal')" id="tab-journal"><span>✎</span> <span class="tab-label">Journal</span></button>
-    <button class="nav-tab" onclick="showPage('analytics')" id="tab-analytics"><span>◎</span> <span class="tab-label">Insights</span></button>
+    <button class="nav-tab active" onclick="showPage('home')"      id="tab-home">     <span>✿</span> <span class="tab-label"> Today</span></button>
+    <button class="nav-tab"        onclick="showPage('chat')"      id="tab-chat">     <span>⌁</span> <span class="tab-label"> Talk</span></button>
+    <button class="nav-tab"        onclick="showPage('journal')"   id="tab-journal">  <span>✎</span> <span class="tab-label"> Journal</span></button>
+    <button class="nav-tab"        onclick="showPage('analytics')" id="tab-analytics"><span>◎</span> <span class="tab-label"> Insights</span></button>
   </div>
   <div class="nav-right">
-    <button class="btn-lonely" onclick="openLonely()"><div class="pulse-dot"></div>I need someone</button>
+    <button class="btn-lonely" onclick="openLonely()">
+      <div class="pulse-dot"></div>
+      <span class="lonely-label">I need someone</span>
+    </button>
   </div>
 </nav>
 
-<!-- HOME -->
+<!-- ═══════ HOME ═══════ -->
 <div class="page active" id="page-home">
-  <div style="max-width: 680px; margin: 0 auto; padding: 32px 24px;">
-    <div class="home-header" style="padding-top: 24px;">
-      <h1>How are you feeling<br><em>right now?</em></h1>
+  <div style="max-width:680px;margin:0 auto;padding:28px 18px;">
+    <div class="home-header" style="padding-top:20px;">
+      <h1>How are you feeling<br/><em>right now?</em></h1>
       <p>This is a safe, gentle space. There's no right or wrong way to feel.</p>
     </div>
+
     <div class="wisdom-banner">
       <p class="wisdom-text" id="wisdom-text">The soul that sees beauty may sometimes walk alone.</p>
       <p class="wisdom-source" id="wisdom-source">— Johann Wolfgang von Goethe</p>
     </div>
+
     <div class="mood-card">
-      <h2>Check in with yourself</h2>
-      <div class="mood-label">What best describes your mood?</div>
-      <div class="emoji-grid">
-        <button class="emoji-btn" onclick="selectMood(this,'Happy','😊')"><span class="e">😊</span><span class="el">Happy</span></button>
-        <button class="emoji-btn" onclick="selectMood(this,'Peaceful','😌')"><span class="e">😌</span><span class="el">Peaceful</span></button>
-        <button class="emoji-btn" onclick="selectMood(this,'Grateful','🥹')"><span class="e">🥹</span><span class="el">Grateful</span></button>
-        <button class="emoji-btn" onclick="selectMood(this,'Sad','😢')"><span class="e">😢</span><span class="el">Sad</span></button>
-        <button class="emoji-btn" onclick="selectMood(this,'Anxious','😰')"><span class="e">😰</span><span class="el">Anxious</span></button>
-        <button class="emoji-btn" onclick="selectMood(this,'Angry','😤')"><span class="e">😤</span><span class="el">Angry</span></button>
-        <button class="emoji-btn" onclick="selectMood(this,'Confused','😕')"><span class="e">😕</span><span class="el">Confused</span></button>
-        <button class="emoji-btn" onclick="selectMood(this,'Tired','😴')"><span class="e">😴</span><span class="el">Tired</span></button>
-        <button class="emoji-btn" onclick="selectMood(this,'Hopeful','🌱')"><span class="e">🌱</span><span class="el">Hopeful</span></button>
-        <button class="emoji-btn" onclick="selectMood(this,'Lonely','🌧️')"><span class="e">🌧️</span><span class="el">Lonely</span></button>
-        <button class="emoji-btn" onclick="selectMood(this,'Excited','✨')"><span class="e">✨</span><span class="el">Excited</span></button>
-        <button class="emoji-btn" onclick="selectMood(this,'Numb','🌫️')"><span class="e">🌫️</span><span class="el">Numb</span></button>
-        <button class="emoji-btn" onclick="selectMood(this,'Overwhelmed','🌊')"><span class="e">🌊</span><span class="el">Overwhelmed</span></button>
-        <button class="emoji-btn" onclick="selectMood(this,'Content','☁️')"><span class="e">☁️</span><span class="el">Content</span></button>
+      <h2>Check in with yourself <span>· select all that apply</span></h2>
+
+      <div class="multi-hint">You can select multiple moods — emotions often come in layers.</div>
+
+      <!-- Selected moods chips -->
+      <div class="selected-moods-bar" id="selected-moods-bar"></div>
+
+      <div class="mood-label">What are you feeling right now?</div>
+      <div class="emoji-grid" id="emoji-grid">
+        <!-- Built by JS -->
       </div>
+
       <div class="slider-wrap">
-        <div class="mood-label">Intensity of this feeling</div>
+        <div class="mood-label">Overall intensity of these feelings</div>
         <div class="slider-row">
-          <span style="font-size:14px;color:var(--text3)">Mild</span>
-          <input type="range" min="1" max="10" value="5" id="intensity-slider" oninput="updateIntensity(this.value)">
-          <span style="font-size:14px;color:var(--text3)">Intense</span>
+          <span style="font-size:13px;color:var(--text3)">Mild</span>
+          <input type="range" min="1" max="10" value="5" id="intensity-slider" oninput="updateIntensity(this.value)"/>
+          <span style="font-size:13px;color:var(--text3)">Intense</span>
           <span class="slider-val" id="intensity-val">5</span>
         </div>
         <div class="slider-labels"><span>1</span><span>5</span><span>10</span></div>
       </div>
+
       <div class="mood-label">What's on your mind? (optional)</div>
       <textarea id="mood-text" rows="3" placeholder="Write freely... this is your space. What happened today? What are you feeling inside?"></textarea>
-      <div style="margin-top: 20px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+
+      <div style="margin-top:18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
         <button class="btn-primary" id="checkin-btn" onclick="submitCheckin()">✦ Share with Serene</button>
         <button class="btn-secondary" onclick="startBreathing()">◎ Breathe with me</button>
       </div>
     </div>
+
     <div class="companion-reply" id="companion-reply">
       <div class="companion-avatar">✦</div>
       <div class="companion-name">SERENE · YOUR COMPANION</div>
+      <div class="checkin-moods-summary" id="checkin-moods-summary"></div>
       <div class="companion-text" id="companion-text">Loading...</div>
       <div class="companion-affirmation" id="companion-affirmation"></div>
       <div class="suggestions-row" id="suggestions-row"></div>
     </div>
-    <div style="margin-top: 32px;">
+
+    <div style="margin-top:30px;">
       <div class="section-title">Recent check-ins</div>
       <div class="section-sub">Your emotional journey this week</div>
-      <div id="recent-moods"><div class="history-empty">Your check-ins will appear here.<br>Begin whenever you're ready.</div></div>
+      <div id="recent-moods">
+        <div class="history-empty">Your check-ins will appear here.<br/>Begin whenever you're ready.</div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- CHAT -->
+<!-- ═══════ CHAT ═══════ -->
 <div class="page" id="page-chat">
   <div class="chat-wrap">
     <div class="chat-header">
       <div class="companion-circle">✦<div class="online-dot"></div></div>
-      <div class="chat-header-info"><h3>Serene</h3><p>Always here for you · Private & safe</p></div>
+      <div class="chat-header-info">
+        <h3>Serene</h3>
+        <p>Always here for you · Private &amp; safe</p>
+      </div>
     </div>
     <div class="chat-messages" id="chat-messages">
       <div class="msg ai">
@@ -321,7 +723,7 @@
   </div>
 </div>
 
-<!-- JOURNAL -->
+<!-- ═══════ JOURNAL ═══════ -->
 <div class="page" id="page-journal">
   <div class="container">
     <div class="section-title">Your Journal</div>
@@ -329,7 +731,7 @@
     <div class="journal-compose">
       <h2>New Entry</h2>
       <textarea id="journal-text" rows="5" placeholder="Dear journal... what's been weighing on you? What are you grateful for? Write freely — this is yours alone."></textarea>
-      <div style="margin: 14px 0 8px;">
+      <div style="margin:13px 0 7px;">
         <div class="mood-label">Tag this entry</div>
         <div class="tag-row" id="journal-tags">
           <span class="emotion-tag" onclick="toggleTag(this)">Reflective</span>
@@ -343,413 +745,767 @@
           <span class="emotion-tag" onclick="toggleTag(this)">Joy</span>
         </div>
       </div>
-      <div style="display: flex; gap: 10px; margin-top: 16px;">
-        <button class="btn-primary" onclick="saveJournalEntry()">✦ Save & Reflect</button>
+      <div style="display:flex;gap:10px;margin-top:15px;flex-wrap:wrap;">
+        <button class="btn-primary" onclick="saveJournalEntry()">✦ Save &amp; Reflect</button>
         <button class="btn-secondary" onclick="clearJournal()">Clear</button>
       </div>
     </div>
-    <div class="section-title" style="margin-bottom: 16px;">Past Entries</div>
-    <div id="journal-entries"><div class="history-empty">Your journal entries will appear here.<br>Begin writing to find clarity.</div></div>
+    <div class="section-title" style="margin-bottom:15px;">Past Entries</div>
+    <div id="journal-entries">
+      <div class="history-empty">Your journal entries will appear here.<br/>Begin writing to find clarity.</div>
+    </div>
   </div>
 </div>
 
-<!-- ANALYTICS -->
+<!-- ═══════ ANALYTICS ═══════ -->
 <div class="page" id="page-analytics">
   <div class="container">
     <div class="section-title">Your Emotional Insights</div>
     <div class="section-sub">Patterns, progress, and gentle observations from your journey.</div>
     <div class="analytics-grid">
-      <div class="stat-card"><div class="stat-label">Check-ins this week</div><div class="stat-value" id="stat-checkins">0</div><div class="stat-sub">Keep showing up for yourself</div></div>
-      <div class="stat-card"><div class="stat-label">Most felt emotion</div><div class="stat-value" id="stat-top-mood" style="font-size:20px;">—</div><div class="stat-sub" id="stat-top-sub">Log moods to see patterns</div></div>
-      <div class="stat-card"><div class="stat-label">Avg. intensity</div><div class="stat-value" id="stat-avg">—</div><div class="stat-sub">Your emotional weight</div></div>
-      <div class="stat-card"><div class="stat-label">Journal entries</div><div class="stat-value" id="stat-journals">0</div><div class="stat-sub">Words of reflection written</div></div>
+      <div class="stat-card">
+        <div class="stat-label">Check-ins this week</div>
+        <div class="stat-value" id="stat-checkins">0</div>
+        <div class="stat-sub">Keep showing up for yourself</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Most felt emotion</div>
+        <div class="stat-value" id="stat-top-mood" style="font-size:18px;">—</div>
+        <div class="stat-sub" id="stat-top-sub">Log moods to see patterns</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Avg. intensity</div>
+        <div class="stat-value" id="stat-avg">—</div>
+        <div class="stat-sub">Your emotional weight</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Journal entries</div>
+        <div class="stat-value" id="stat-journals">0</div>
+        <div class="stat-sub">Words of reflection written</div>
+      </div>
     </div>
-    <div class="chart-card"><h3>Mood over the past 7 days</h3><canvas id="moodChart" height="200"></canvas></div>
-    <div class="chart-card"><h3>Emotional distribution</h3><canvas id="distChart" height="220"></canvas></div>
-    <div class="section-title" style="margin-bottom: 16px;">Gentle insights</div>
+    <div class="chart-card">
+      <h3>Mood intensity over the past 7 days</h3>
+      <canvas id="moodChart" height="200"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Emotional distribution</h3>
+      <canvas id="distChart" height="220"></canvas>
+    </div>
+    <div class="section-title" style="margin-bottom:15px;">Gentle insights</div>
     <div id="insights-list">
       <div class="insight-card">
-        <div class="insight-icon" style="background:var(--accent3);">🌱</div>
-        <div class="insight-body"><h4>You're building awareness</h4><p>Just the act of checking in with yourself shows tremendous self-compassion. Every entry is a step toward understanding.</p></div>
+        <div class="insight-icon" style="background:var(--accent3)">🌱</div>
+        <div class="insight-body">
+          <h4>You're building awareness</h4>
+          <p>Just the act of checking in with yourself shows tremendous self-compassion. Every entry is a step toward understanding.</p>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- LONELY MODAL -->
+<!-- ═══════ LONELY MODAL ═══════ -->
 <div class="modal-overlay" id="lonely-modal">
   <div class="lonely-modal">
     <button class="close-modal" onclick="closeLonely()">×</button>
     <div class="lonely-heart">🫂</div>
-    <h2>You reached out.<br>That took courage.</h2>
+    <h2>You reached out.<br/>That took courage.</h2>
     <p>You don't have to explain yourself. Feeling alone is one of the hardest human experiences. I'm right here with you.</p>
     <div class="lonely-options">
-      <button class="lonely-opt" onclick="startLonelyChat('just talk')"><div class="lonely-opt-title">Just... talk to me</div><div class="lonely-opt-desc">No topic, no agenda. Just a warm presence.</div></button>
-      <button class="lonely-opt" onclick="startLonelyChat('help me calm down')"><div class="lonely-opt-title">Help me calm down</div><div class="lonely-opt-desc">Breathing, grounding, gentle guidance.</div></button>
-      <button class="lonely-opt" onclick="startBreathing()"><div class="lonely-opt-title">Guide me through breathing</div><div class="lonely-opt-desc">A 4-7-8 breathing exercise together.</div></button>
-      <button class="lonely-opt" onclick="startLonelyChat('remind me it will be okay')"><div class="lonely-opt-title">Remind me it will be okay</div><div class="lonely-opt-desc">Words of warmth and wisdom for hard moments.</div></button>
+      <button class="lonely-opt" onclick="startLonelyChat('just talk')">
+        <div class="lonely-opt-title">Just... talk to me</div>
+        <div class="lonely-opt-desc">No topic, no agenda. Just a warm presence.</div>
+      </button>
+      <button class="lonely-opt" onclick="startLonelyChat('help me calm down')">
+        <div class="lonely-opt-title">Help me calm down</div>
+        <div class="lonely-opt-desc">Breathing, grounding, gentle guidance.</div>
+      </button>
+      <button class="lonely-opt" onclick="startBreathing()">
+        <div class="lonely-opt-title">Guide me through breathing</div>
+        <div class="lonely-opt-desc">A 4-7-8 breathing exercise together.</div>
+      </button>
+      <button class="lonely-opt" onclick="startLonelyChat('remind me it will be okay')">
+        <div class="lonely-opt-title">Remind me it will be okay</div>
+        <div class="lonely-opt-desc">Words of warmth and wisdom for hard moments.</div>
+      </button>
     </div>
   </div>
 </div>
 
-<!-- BREATHING -->
+<!-- ═══════ BREATHING ═══════ -->
 <div class="breathing-overlay" id="breathing-overlay">
   <button class="exit-breath" onclick="stopBreathing()">End session</button>
   <div class="breathing-circle" id="breath-circle">
-    <div style="text-align:center"><div class="breathing-count" id="breath-count">4</div></div>
+    <div style="text-align:center;">
+      <div class="breathing-count" id="breath-count">4</div>
+    </div>
   </div>
   <div class="breathing-text" id="breath-text">Breathe in...</div>
   <div class="breathing-sub">4–7–8 breathing · Let go of tension</div>
-  <p style="color:rgba(255,255,255,0.35);font-size:13px;margin-top:24px;text-align:center;">Find a comfortable position. You are safe.</p>
+  <p style="color:rgba(255,255,255,0.3);font-size:13px;margin-top:22px;text-align:center;">Find a comfortable position. You are safe.</p>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script>
-// ─── GROQ CONFIG ──────────────────────────────────────────────────────
+/* ══════════════════════════════════════════════════════════
+   GROQ CONFIG
+══════════════════════════════════════════════════════════ */
 const GROQ_API_KEY = "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";
-const GROQ_MODEL = "llama-3.1-8b-instant";
-const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
+const GROQ_MODEL   = "llama-3.1-8b-instant";
+const GROQ_URL     = "https://api.groq.com/openai/v1/chat/completions";
 
-async function groqChat(systemPrompt, messages, maxTokens = 500) {
-  const response = await fetch(GROQ_URL, {
+async function groqChat(systemPrompt, messages, maxTokens = 600) {
+  const res = await fetch(GROQ_URL, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer " + GROQ_API_KEY
-    },
-    body: JSON.stringify({
-      model: GROQ_MODEL,
-      max_tokens: maxTokens,
-      messages: [{ role: "system", content: systemPrompt }, ...messages]
-    })
+    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + GROQ_API_KEY },
+    body: JSON.stringify({ model: GROQ_MODEL, max_tokens: maxTokens, messages: [{ role: "system", content: systemPrompt }, ...messages] })
   });
-  const data = await response.json();
+  const data = await res.json();
+  if (!data.choices?.[0]) throw new Error("No response");
   return data.choices[0].message.content;
 }
 
-// ─── STATE ────────────────────────────────────────────────────────────
-let state = { moodHistory: [], journals: [], chatHistory: [], selectedMood: null, selectedMoodEmoji: null };
-
-const WISDOM = [
-  { text: "The present moment is the only moment available to us, and it is the door to all moments.", source: "Thich Nhat Hanh" },
-  { text: "You don't have to control your thoughts. You just have to stop letting them control you.", source: "Dan Millman" },
-  { text: "In the middle of difficulty lies opportunity.", source: "Albert Einstein" },
-  { text: "The wound is the place where the Light enters you.", source: "Rumi" },
-  { text: "What you are is what you have been. What you'll be is what you do now.", source: "Buddha" },
-  { text: "Be gentle with yourself. You are a child of the universe, no less than the trees and stars.", source: "Max Ehrmann" },
-  { text: "Not all those who wander are lost.", source: "J.R.R. Tolkien" },
-  { text: "Sometimes your joy is the source of your smile, but sometimes your smile can be the source of your joy.", source: "Thich Nhat Hanh" },
-  { text: "The soul that sees beauty may sometimes walk alone.", source: "Goethe" },
-  { text: "Every morning we are born again. What we do today is what matters most.", source: "Buddha" },
+/* ══════════════════════════════════════════════════════════
+   MOOD DEFINITIONS
+   Each mood carries: emoji, label, color (for chip bg/text)
+══════════════════════════════════════════════════════════ */
+const ALL_MOODS = [
+  { emoji:"😊", label:"Happy",       color:"#f59f2a", bg:"#fffbe6" },
+  { emoji:"😌", label:"Peaceful",    color:"#3db89a", bg:"#e0f6f1" },
+  { emoji:"🥹", label:"Grateful",    color:"#4a9fd4", bg:"#d4edf9" },
+  { emoji:"😢", label:"Sad",         color:"#7094c8", bg:"#e8effc" },
+  { emoji:"😰", label:"Anxious",     color:"#8e7dd4", bg:"#ede9fc" },
+  { emoji:"😤", label:"Angry",       color:"#d45a4a", bg:"#fce8e8" },
+  { emoji:"😕", label:"Confused",    color:"#a0897a", bg:"#f5eeea" },
+  { emoji:"😴", label:"Tired",       color:"#6a8aaa", bg:"#e8eef5" },
+  { emoji:"🌱", label:"Hopeful",     color:"#3db89a", bg:"#e0f6f1" },
+  { emoji:"🌧️",label:"Lonely",      color:"#5a7eaa", bg:"#e8eef8" },
+  { emoji:"✨", label:"Excited",     color:"#e8a820", bg:"#fff8e0" },
+  { emoji:"🌫️",label:"Numb",        color:"#7a8aaa", bg:"#eef0f5" },
+  { emoji:"🌊", label:"Overwhelmed", color:"#4a80c8", bg:"#dceafe" },
+  { emoji:"☁️", label:"Content",    color:"#6aabca", bg:"#e0f0fa" },
 ];
 
+/* ══════════════════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════════════════ */
+let state = {
+  moodHistory:   [],   // each entry: { moods:[{emoji,label}], intensity, text, timestamp }
+  journals:      [],
+  chatHistory:   [],
+  selectedMoods: [],   // ← MULTI: array of { emoji, label, color, bg }
+};
+
+const WISDOM = [
+  { text:"The present moment is the only moment available to us, and it is the door to all moments.", source:"Thich Nhat Hanh" },
+  { text:"You don't have to control your thoughts. You just have to stop letting them control you.", source:"Dan Millman" },
+  { text:"In the middle of difficulty lies opportunity.", source:"Albert Einstein" },
+  { text:"The wound is the place where the Light enters you.", source:"Rumi" },
+  { text:"What you are is what you have been. What you'll be is what you do now.", source:"Buddha" },
+  { text:"Be gentle with yourself. You are a child of the universe, no less than the trees and stars.", source:"Max Ehrmann" },
+  { text:"Not all those who wander are lost.", source:"J.R.R. Tolkien" },
+  { text:"Sometimes your joy is the source of your smile, but sometimes your smile can be the source of your joy.", source:"Thich Nhat Hanh" },
+  { text:"The soul that sees beauty may sometimes walk alone.", source:"Goethe" },
+  { text:"Every morning we are born again. What we do today is what matters most.", source:"Buddha" },
+  { text:"You are allowed to be both a masterpiece and a work in progress simultaneously.", source:"Sophia Bush" },
+  { text:"Courage does not always roar. Sometimes it is the quiet voice at the end of the day saying: I will try again tomorrow.", source:"Mary Anne Radmacher" },
+];
+
+/* ══════════════════════════════════════════════════════════
+   BOOT
+══════════════════════════════════════════════════════════ */
 function loadState() {
-  try { const s = localStorage.getItem('serene_state'); if (s) state = { ...state, ...JSON.parse(s) }; } catch(e) {}
-  renderHistory(); renderJournals(); updateAnalytics(); setDailyWisdom();
+  try { const s = localStorage.getItem("serene_v2"); if(s) state = {...state, ...JSON.parse(s)}; } catch(e){}
+  // always reset selection on page load
+  state.selectedMoods = [];
+  buildEmojiGrid();
+  renderHistory();
+  renderJournals();
+  updateAnalytics();
+  setDailyWisdom();
+  updateSliderFill(document.getElementById("intensity-slider"));
 }
 
-function saveState() { try { localStorage.setItem('serene_state', JSON.stringify(state)); } catch(e) {} }
+function saveState() {
+  try { localStorage.setItem("serene_v2", JSON.stringify({
+    moodHistory: state.moodHistory,
+    journals:    state.journals,
+    chatHistory: state.chatHistory,
+  })); } catch(e){}
+}
 
+/* ══════════════════════════════════════════════════════════
+   BUILD EMOJI GRID (dynamic, from ALL_MOODS)
+══════════════════════════════════════════════════════════ */
+function buildEmojiGrid() {
+  const grid = document.getElementById("emoji-grid");
+  grid.innerHTML = "";
+  ALL_MOODS.forEach(m => {
+    const btn = document.createElement("button");
+    btn.className = "emoji-btn";
+    btn.dataset.label = m.label;
+    btn.innerHTML = `
+      <div class="check-badge">✓</div>
+      <span class="e">${m.emoji}</span>
+      <span class="el">${m.label}</span>`;
+    btn.onclick = () => toggleMood(btn, m);
+    grid.appendChild(btn);
+  });
+}
+
+/* ══════════════════════════════════════════════════════════
+   MULTI-MOOD TOGGLE  ← core new feature
+══════════════════════════════════════════════════════════ */
+function toggleMood(btn, mood) {
+  const idx = state.selectedMoods.findIndex(m => m.label === mood.label);
+
+  if (idx === -1) {
+    // ADD
+    if (state.selectedMoods.length >= 5) {
+      showToast("You can select up to 5 moods at once 🌸");
+      return;
+    }
+    state.selectedMoods.push(mood);
+    btn.classList.add("selected");
+  } else {
+    // REMOVE
+    state.selectedMoods.splice(idx, 1);
+    btn.classList.remove("selected");
+  }
+
+  renderMoodChips();
+}
+
+function renderMoodChips() {
+  const bar = document.getElementById("selected-moods-bar");
+  bar.innerHTML = "";
+
+  if (!state.selectedMoods.length) {
+    bar.innerHTML = `<span style="font-size:12.5px;color:var(--text3);font-style:italic;">No mood selected yet…</span>`;
+    return;
+  }
+
+  state.selectedMoods.forEach(m => {
+    const chip = document.createElement("div");
+    chip.className = "mood-chip";
+    chip.style.background = m.bg;
+    chip.style.borderColor = m.color + "55";
+    chip.style.color = m.color;
+    chip.innerHTML = `${m.emoji} ${m.label}
+      <button class="mood-chip-remove" onclick="removeMoodChip('${m.label}')" title="Remove">×</button>`;
+    bar.appendChild(chip);
+  });
+}
+
+function removeMoodChip(label) {
+  const idx = state.selectedMoods.findIndex(m => m.label === label);
+  if (idx !== -1) state.selectedMoods.splice(idx, 1);
+  // Deselect button
+  document.querySelectorAll(".emoji-btn").forEach(btn => {
+    if (btn.dataset.label === label) btn.classList.remove("selected");
+  });
+  renderMoodChips();
+}
+
+function clearMoodSelection() {
+  state.selectedMoods = [];
+  document.querySelectorAll(".emoji-btn").forEach(b => b.classList.remove("selected"));
+  renderMoodChips();
+}
+
+/* ══════════════════════════════════════════════════════════
+   PAGE / WISDOM / SLIDER
+══════════════════════════════════════════════════════════ */
 function showPage(page) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('page-' + page).classList.add('active');
-  document.getElementById('tab-' + page).classList.add('active');
-  if (page === 'analytics') setTimeout(updateAnalytics, 100);
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.querySelectorAll(".nav-tab").forEach(t => t.classList.remove("active"));
+  document.getElementById("page-" + page).classList.add("active");
+  document.getElementById("tab-" + page).classList.add("active");
+  if (page === "analytics") setTimeout(updateAnalytics, 100);
 }
 
 function setDailyWisdom() {
   const w = WISDOM[new Date().getDay() % WISDOM.length];
-  document.getElementById('wisdom-text').textContent = w.text;
-  document.getElementById('wisdom-source').textContent = '— ' + w.source;
+  document.getElementById("wisdom-text").textContent   = w.text;
+  document.getElementById("wisdom-source").textContent = "— " + w.source;
 }
 
-function selectMood(btn, mood, emoji) {
-  document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  state.selectedMood = mood; state.selectedMoodEmoji = emoji;
+function updateIntensity(val) {
+  document.getElementById("intensity-val").textContent = val;
+  updateSliderFill(document.getElementById("intensity-slider"));
 }
 
-function updateIntensity(val) { document.getElementById('intensity-val').textContent = val; }
+function updateSliderFill(el) {
+  const pct = ((el.value - el.min) / (el.max - el.min)) * 100;
+  el.style.background = `linear-gradient(to right, var(--accent) 0%, var(--accent) ${pct}%, var(--bg3) ${pct}%, var(--bg3) 100%)`;
+}
 
+/* ══════════════════════════════════════════════════════════
+   SUBMIT CHECK-IN  (multi-mood aware)
+══════════════════════════════════════════════════════════ */
 async function submitCheckin() {
-  if (!state.selectedMood) { showToast('Please select a mood first 🌸'); return; }
-  const intensity = parseInt(document.getElementById('intensity-slider').value);
-  const text = document.getElementById('mood-text').value.trim();
-  const entry = { mood: state.selectedMood, emoji: state.selectedMoodEmoji, intensity, text, timestamp: new Date().toISOString() };
-  state.moodHistory.unshift(entry); saveState(); renderHistory();
+  if (!state.selectedMoods.length) { showToast("Please select at least one mood 🌸"); return; }
 
-  const replyEl = document.getElementById('companion-reply');
-  replyEl.classList.add('show');
-  document.getElementById('companion-text').innerHTML = '<div class="loading-dots"><span></span><span></span><span></span></div>';
-  document.getElementById('companion-affirmation').textContent = '';
-  document.getElementById('suggestions-row').innerHTML = '';
+  const intensity = parseInt(document.getElementById("intensity-slider").value);
+  const text      = document.getElementById("mood-text").value.trim();
 
-  const btn = document.getElementById('checkin-btn');
+  const entry = {
+    moods:     state.selectedMoods.map(m => ({ emoji: m.emoji, label: m.label, color: m.color })),
+    intensity,
+    text,
+    timestamp: new Date().toISOString(),
+  };
+
+  state.moodHistory.unshift(entry);
+  saveState();
+  renderHistory();
+
+  // Show companion reply with mood summary
+  const replyEl = document.getElementById("companion-reply");
+  replyEl.classList.add("show");
+
+  const sumEl = document.getElementById("checkin-moods-summary");
+  sumEl.innerHTML = entry.moods.map(m => `<span class="csm-tag" style="color:${m.color};background:${m.color}18;border-color:${m.color}30;">${m.emoji} ${m.label}</span>`).join("");
+
+  document.getElementById("companion-text").innerHTML = '<div class="loading-dots"><span></span><span></span><span></span></div>';
+  document.getElementById("companion-affirmation").textContent = "";
+  document.getElementById("suggestions-row").innerHTML = "";
+
+  const btn = document.getElementById("checkin-btn");
   btn.disabled = true;
-  try { renderCheckinReply(await callCompanion(entry), entry); }
-  catch(e) { renderCheckinReply(getFallbackCheckinReply(entry), entry); }
+  try {
+    renderCheckinReply(await callCompanion(entry), entry);
+  } catch(e) {
+    renderCheckinReply(getFallbackCheckinReply(entry), entry);
+  }
   btn.disabled = false;
+
+  // Reset
+  clearMoodSelection();
+  document.getElementById("mood-text").value = "";
+  document.getElementById("intensity-slider").value = 5;
+  updateIntensity(5);
 }
 
 function renderCheckinReply(data, entry) {
-  document.getElementById('companion-text').textContent = data.message;
-  document.getElementById('companion-affirmation').textContent = data.affirmation;
-  const srow = document.getElementById('suggestions-row');
-  srow.innerHTML = '';
+  document.getElementById("companion-text").textContent = data.message;
+  document.getElementById("companion-affirmation").textContent = data.affirmation;
+  const srow = document.getElementById("suggestions-row");
+  srow.innerHTML = "";
   (data.suggestions || []).forEach(s => {
-    const pill = document.createElement('button');
-    pill.className = 'suggestion-pill'; pill.textContent = s;
-    pill.onclick = () => { showPage('chat'); setTimeout(() => addQuickToChatAndSend(s), 200); };
+    const pill = document.createElement("button");
+    pill.className = "suggestion-pill"; pill.textContent = s;
+    pill.onclick = () => { showPage("chat"); setTimeout(() => addQuickToChatAndSend(s), 200); };
     srow.appendChild(pill);
   });
-  document.getElementById('companion-reply').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  document.getElementById("companion-reply").scrollIntoView({ behavior:"smooth", block:"nearest" });
 }
 
+/* ══════════════════════════════════════════════════════════
+   RENDER HISTORY  (handles multi-mood entries + legacy)
+══════════════════════════════════════════════════════════ */
 function renderHistory() {
-  const container = document.getElementById('recent-moods');
-  const recent = state.moodHistory.slice(0, 5);
-  if (!recent.length) { container.innerHTML = '<div class="history-empty">Your check-ins will appear here.<br>Begin whenever you\'re ready.</div>'; return; }
-  container.innerHTML = recent.map(e => `
-    <div class="mood-entry">
-      <div class="entry-emoji">${e.emoji}</div>
+  const container = document.getElementById("recent-moods");
+  const recent    = state.moodHistory.slice(0, 6);
+  if (!recent.length) {
+    container.innerHTML = '<div class="history-empty">Your check-ins will appear here.<br/>Begin whenever you\'re ready.</div>';
+    return;
+  }
+
+  container.innerHTML = recent.map(e => {
+    // Support legacy single-mood entries
+    const moods = e.moods || [{ emoji: e.emoji || "💭", label: e.mood || "Unknown", color: "var(--accent)" }];
+    const emojisHtml = moods.map(m => m.emoji).join(" ");
+    const moodsHtml  = moods.map(m => `<span class="entry-mood-tag" style="color:${m.color};background:${m.color}18;">${m.emoji} ${m.label}</span>`).join("");
+
+    return `<div class="mood-entry">
+      <div class="entry-emojis">${emojisHtml}</div>
       <div class="entry-body">
-        <div class="entry-top"><span class="entry-mood">${e.mood}</span><span class="entry-time">${formatTime(e.timestamp)}</span></div>
-        ${e.text ? `<div class="entry-text">${escHtml(e.text.substring(0,140))}${e.text.length>140?'...':''}</div>` : ''}
-        <div class="entry-intensity"><div class="intensity-bar"><div class="intensity-fill" style="width:${e.intensity*10}%"></div></div>Intensity ${e.intensity}/10</div>
+        <div class="entry-top">
+          <div class="entry-mood-multi">${moodsHtml}</div>
+          <span class="entry-time">${formatTime(e.timestamp)}</span>
+        </div>
+        ${e.text ? `<div class="entry-text">${escHtml(e.text.substring(0,140))}${e.text.length>140?"...":""}</div>` : ""}
+        <div class="entry-intensity">
+          <div class="intensity-bar"><div class="intensity-fill" style="width:${e.intensity*10}%"></div></div>
+          Intensity ${e.intensity}/10
+        </div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join("");
 }
 
-function sendQuick(btn) { document.getElementById('chat-input').value = btn.textContent; sendChat(); }
-function addQuickToChatAndSend(text) { document.getElementById('chat-input').value = text; sendChat(); }
+/* ══════════════════════════════════════════════════════════
+   CHAT
+══════════════════════════════════════════════════════════ */
+function sendQuick(btn) { document.getElementById("chat-input").value = btn.textContent.trim(); sendChat(); }
+function addQuickToChatAndSend(text) { document.getElementById("chat-input").value = text; sendChat(); }
 
 async function sendChat() {
-  const input = document.getElementById('chat-input');
-  const text = input.value.trim(); if (!text) return;
-  input.value = ''; autoResize(input);
-  appendMsg('user', text);
-  state.chatHistory.push({ role: 'user', content: text });
-  const typingId = appendMsg('ai', null, true);
+  const input = document.getElementById("chat-input");
+  const text  = input.value.trim();
+  if (!text) return;
+  input.value = ""; autoResize(input);
+  appendMsg("user", text);
+  state.chatHistory.push({ role:"user", content:text });
+  const typingId = appendMsg("ai", null, true);
   try {
     const reply = await callCompanionChat(text);
     removeMsg(typingId);
-    appendMsg('ai', reply.message, false, reply.type === 'wisdom');
-    state.chatHistory.push({ role: 'assistant', content: reply.message });
+    appendMsg("ai", reply.message, false, reply.type === "wisdom");
+    state.chatHistory.push({ role:"assistant", content:reply.message });
     if (state.chatHistory.length > 20) state.chatHistory = state.chatHistory.slice(-20);
-  } catch(e) { removeMsg(typingId); appendMsg('ai', getFallbackChatReply(text)); }
+    saveState();
+  } catch(e) {
+    removeMsg(typingId);
+    appendMsg("ai", getFallbackChatReply(text));
+  }
 }
 
 let msgIdCounter = 0;
-function appendMsg(role, text, isTyping = false, isWisdom = false) {
-  const id = 'msg-' + (++msgIdCounter);
-  const msgs = document.getElementById('chat-messages');
-  const div = document.createElement('div');
-  div.className = 'msg ' + role; div.id = id;
-  const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  div.innerHTML = `<div class="msg-bubble${isWisdom?' wisdom':''}">${isTyping?'<div class="loading-dots"><span></span><span></span><span></span></div>':escHtml(text).replace(/\n/g,'<br>')}</div><span class="msg-time">${time}</span>`;
-  msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+function appendMsg(role, text, isTyping=false, isWisdom=false) {
+  const id   = "msg-" + ++msgIdCounter;
+  const msgs = document.getElementById("chat-messages");
+  const div  = document.createElement("div");
+  div.className = "msg " + role; div.id = id;
+  const time = new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+  div.innerHTML = `<div class="msg-bubble${isWisdom?" wisdom":""}">
+    ${isTyping ? '<div class="loading-dots"><span></span><span></span><span></span></div>' : escHtml(text).replace(/\n/g,"<br>")}
+  </div><span class="msg-time">${time}</span>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
   return id;
 }
 
-function removeMsg(id) { const el = document.getElementById(id); if (el) el.remove(); }
+function removeMsg(id) { const el = document.getElementById(id); if(el) el.remove(); }
 
+/* ── VOICE INPUT ── */
 let recognition = null, isListening = false;
 function toggleVoice() {
-  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) { showToast('Voice not supported in this browser 🎤'); return; }
-  const btn = document.getElementById('voice-btn');
-  if (isListening) { recognition && recognition.stop(); isListening = false; btn.classList.remove('listening'); btn.textContent = '🎤'; return; }
+  if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) {
+    showToast("Voice not supported in this browser 🎤"); return;
+  }
+  const btn = document.getElementById("voice-btn");
+  if (isListening) { recognition?.stop(); return; }
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  recognition = new SR(); recognition.continuous = false; recognition.interimResults = true; recognition.lang = 'en-US';
-  recognition.onresult = (e) => { const t = Array.from(e.results).map(r => r[0].transcript).join(''); document.getElementById('chat-input').value = t; autoResize(document.getElementById('chat-input')); };
-  recognition.onend = () => { isListening = false; btn.classList.remove('listening'); btn.textContent = '🎤'; const v = document.getElementById('chat-input').value.trim(); if (v) sendChat(); };
-  recognition.onerror = () => { isListening = false; btn.classList.remove('listening'); btn.textContent = '🎤'; };
-  recognition.start(); isListening = true; btn.classList.add('listening'); btn.textContent = '⏹';
+  recognition = new SR();
+  recognition.continuous = false; recognition.interimResults = true; recognition.lang = "en-US";
+  recognition.onresult = e => {
+    const t = Array.from(e.results).map(r=>r[0].transcript).join("");
+    document.getElementById("chat-input").value = t;
+    autoResize(document.getElementById("chat-input"));
+  };
+  recognition.onend = () => {
+    isListening = false; btn.classList.remove("listening"); btn.textContent = "🎤";
+    const v = document.getElementById("chat-input").value.trim();
+    if (v) sendChat();
+  };
+  recognition.onerror = () => { isListening = false; btn.classList.remove("listening"); btn.textContent = "🎤"; };
+  recognition.start(); isListening = true; btn.classList.add("listening"); btn.textContent = "⏹";
 }
 
-function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }
-function toggleTag(el) { el.classList.toggle('selected'); }
+function autoResize(el) { el.style.height = "auto"; el.style.height = Math.min(el.scrollHeight, 120) + "px"; }
+
+/* ══════════════════════════════════════════════════════════
+   JOURNAL
+══════════════════════════════════════════════════════════ */
+function toggleTag(el) { el.classList.toggle("selected"); }
 
 async function saveJournalEntry() {
-  const text = document.getElementById('journal-text').value.trim();
-  if (!text) { showToast('Write something first 🌿'); return; }
-  const tags = [...document.querySelectorAll('#journal-tags .selected')].map(t => t.textContent);
+  const text = document.getElementById("journal-text").value.trim();
+  if (!text) { showToast("Write something first 🌿"); return; }
+  const tags = [...document.querySelectorAll("#journal-tags .selected")].map(t=>t.textContent);
   const entry = { text, tags, timestamp: new Date().toISOString(), reflection: null };
-  state.journals.unshift(entry); saveState();
-  try { state.journals[0].reflection = await callJournalReflection(text); saveState(); }
-  catch(e) { state.journals[0].reflection = "Thank you for sharing your thoughts. Writing is an act of courage and self-compassion."; }
-  document.getElementById('journal-text').value = '';
-  document.querySelectorAll('#journal-tags .selected').forEach(t => t.classList.remove('selected'));
-  renderJournals(); showToast('Entry saved ✨'); updateAnalytics();
+  state.journals.unshift(entry);
+  saveState();
+  try {
+    state.journals[0].reflection = await callJournalReflection(text);
+    saveState();
+  } catch(e) {
+    state.journals[0].reflection = "Thank you for sharing your thoughts. Writing is an act of courage and self-compassion.";
+  }
+  document.getElementById("journal-text").value = "";
+  document.querySelectorAll("#journal-tags .selected").forEach(t => t.classList.remove("selected"));
+  renderJournals(); showToast("Entry saved ✨"); updateAnalytics();
 }
 
-function clearJournal() { document.getElementById('journal-text').value = ''; document.querySelectorAll('#journal-tags .selected').forEach(t => t.classList.remove('selected')); }
+function clearJournal() {
+  document.getElementById("journal-text").value = "";
+  document.querySelectorAll("#journal-tags .selected").forEach(t => t.classList.remove("selected"));
+}
 
 function renderJournals() {
-  const container = document.getElementById('journal-entries');
-  if (!state.journals.length) { container.innerHTML = '<div class="history-empty">Your journal entries will appear here.<br>Begin writing to find clarity.</div>'; return; }
-  container.innerHTML = state.journals.slice(0, 10).map(e => `
+  const c = document.getElementById("journal-entries");
+  if (!state.journals.length) { c.innerHTML = '<div class="history-empty">Your journal entries will appear here.<br/>Begin writing to find clarity.</div>'; return; }
+  c.innerHTML = state.journals.slice(0,10).map(e => `
     <div class="journal-entry-card">
-      <div class="je-header"><div class="je-tags">${e.tags.map(t=>`<span class="je-tag">${t}</span>`).join('')}</div><span class="je-date">${formatTime(e.timestamp)}</span></div>
-      <div class="je-text">${escHtml(e.text.substring(0,200))}${e.text.length>200?'...':''}</div>
-      ${e.reflection?`<div class="je-reflection">✦ ${escHtml(e.reflection)}</div>`:''}
-    </div>`).join('');
+      <div class="je-header">
+        <div class="je-tags">${e.tags.map(t=>`<span class="je-tag">${t}</span>`).join("")}</div>
+        <span class="je-date">${formatTime(e.timestamp)}</span>
+      </div>
+      <div class="je-text">${escHtml(e.text.substring(0,200))}${e.text.length>200?"...":""}</div>
+      ${e.reflection ? `<div class="je-reflection">✦ ${escHtml(e.reflection)}</div>` : ""}
+    </div>`).join("");
 }
 
+/* ══════════════════════════════════════════════════════════
+   ANALYTICS  (multi-mood aware — counts each mood separately)
+══════════════════════════════════════════════════════════ */
 let moodChartInst = null, distChartInst = null;
+
 function updateAnalytics() {
   const h = state.moodHistory;
-  document.getElementById('stat-checkins').textContent = h.length;
-  document.getElementById('stat-journals').textContent = state.journals.length;
-  if (!h.length) { document.getElementById('stat-top-mood').textContent = '—'; document.getElementById('stat-avg').textContent = '—'; drawEmptyCharts(); return; }
-  const moodCount = {}; let totalIntensity = 0;
-  h.forEach(e => { moodCount[e.mood] = (moodCount[e.mood]||0)+1; totalIntensity += e.intensity; });
+  document.getElementById("stat-checkins").textContent = h.length;
+  document.getElementById("stat-journals").textContent = state.journals.length;
+  if (!h.length) {
+    document.getElementById("stat-top-mood").textContent = "—";
+    document.getElementById("stat-avg").textContent = "—";
+    drawEmptyCharts(); return;
+  }
+
+  // Flatten all moods from all entries
+  const moodCount = {};
+  let totalIntensity = 0;
+  h.forEach(e => {
+    totalIntensity += e.intensity;
+    const moods = e.moods || [{ label: e.mood, emoji: e.emoji }];
+    moods.forEach(m => { moodCount[m.label] = (moodCount[m.label]||0) + 1; });
+  });
+
   const topMood = Object.entries(moodCount).sort((a,b)=>b[1]-a[1])[0];
-  document.getElementById('stat-top-mood').textContent = topMood[0];
-  document.getElementById('stat-top-sub').textContent = `Logged ${topMood[1]} time${topMood[1]>1?'s':''}`;
-  document.getElementById('stat-avg').textContent = (totalIntensity/h.length).toFixed(1);
-  drawMoodChart(); drawDistChart(moodCount); renderInsights(moodCount, totalIntensity/h.length);
+  const topEmoji = ALL_MOODS.find(m=>m.label===topMood[0])?.emoji || "";
+  document.getElementById("stat-top-mood").textContent = topEmoji + " " + topMood[0];
+  document.getElementById("stat-top-sub").textContent = `Felt ${topMood[1]} time${topMood[1]>1?"s":""}`;
+  document.getElementById("stat-avg").textContent = (totalIntensity/h.length).toFixed(1);
+
+  drawMoodChart(); drawDistChart(moodCount);
+  renderInsights(moodCount, totalIntensity/h.length);
 }
 
 function drawMoodChart() {
-  const ctx = document.getElementById('moodChart').getContext('2d');
+  const ctx = document.getElementById("moodChart").getContext("2d");
   if (moodChartInst) moodChartInst.destroy();
-  const labels = [], intensities = [];
-  for (let i = 6; i >= 0; i--) {
+  const labels=[], intensities=[];
+  for (let i=6;i>=0;i--) {
     const d = new Date(); d.setDate(d.getDate()-i);
-    labels.push(d.toLocaleDateString('en',{weekday:'short'}));
-    const de = state.moodHistory.filter(e=>new Date(e.timestamp).toDateString()===d.toDateString());
+    labels.push(d.toLocaleDateString("en",{weekday:"short"}));
+    const de = state.moodHistory.filter(e => new Date(e.timestamp).toDateString()===d.toDateString());
     intensities.push(de.length ? de.reduce((s,e)=>s+e.intensity,0)/de.length : null);
   }
-  moodChartInst = new Chart(ctx, { type:'line', data:{ labels, datasets:[{ label:'Avg intensity', data:intensities, borderColor:'#7c9e8f', backgroundColor:'rgba(124,158,143,0.08)', borderWidth:2, pointBackgroundColor:'#7c9e8f', pointRadius:5, tension:0.4, fill:true, spanGaps:true }]}, options:{ responsive:true, plugins:{legend:{display:false}}, scales:{ y:{min:0,max:10,grid:{color:'rgba(0,0,0,0.05)'},ticks:{color:'#9e8f87'}}, x:{grid:{display:false},ticks:{color:'#9e8f87'}} }}});
+  moodChartInst = new Chart(ctx, {
+    type:"line",
+    data:{ labels, datasets:[{
+      label:"Avg intensity", data:intensities,
+      borderColor:"#4a9fd4", backgroundColor:"rgba(74,159,212,0.09)",
+      borderWidth:2.5, pointBackgroundColor:"#4a9fd4", pointRadius:5, tension:0.4, fill:true, spanGaps:true,
+    }]},
+    options:{ responsive:true, plugins:{legend:{display:false}},
+      scales:{
+        y:{ min:0, max:10, grid:{color:"rgba(74,159,212,0.07)"}, ticks:{color:"#7da3c0"} },
+        x:{ grid:{display:false}, ticks:{color:"#7da3c0"} }
+      }
+    }
+  });
 }
 
 function drawDistChart(moodCount) {
-  const ctx = document.getElementById('distChart').getContext('2d');
+  const ctx = document.getElementById("distChart").getContext("2d");
   if (distChartInst) distChartInst.destroy();
-  const palette = ['#7c9e8f','#c4826a','#c49a4f','#9b8ec4','#5a9abf','#c47c8e','#8fc490','#c4b87c'];
-  distChartInst = new Chart(ctx, { type:'doughnut', data:{ labels:Object.keys(moodCount), datasets:[{ data:Object.values(moodCount), backgroundColor:palette.slice(0,Object.keys(moodCount).length), borderWidth:2, borderColor:'#faf8f5' }]}, options:{ responsive:true, plugins:{legend:{position:'right',labels:{color:'#6b5d56',font:{size:13},padding:12}}} }});
+  const palette = ["#4a9fd4","#3db89a","#f59f2a","#8e7dd4","#e07090","#f0895a","#6aabca","#e8a820","#7094c8","#a0897a"];
+  distChartInst = new Chart(ctx, {
+    type:"doughnut",
+    data:{
+      labels: Object.keys(moodCount),
+      datasets:[{ data:Object.values(moodCount), backgroundColor:palette.slice(0,Object.keys(moodCount).length), borderWidth:3, borderColor:"#f8fcff" }]
+    },
+    options:{ responsive:true, plugins:{legend:{position:"right", labels:{color:"#3d6080",font:{size:12.5},padding:12}}} }
+  });
 }
 
 function drawEmptyCharts() {
-  const ctx1 = document.getElementById('moodChart').getContext('2d');
-  if (moodChartInst) moodChartInst.destroy(); if (distChartInst) distChartInst.destroy();
-  moodChartInst = new Chart(ctx1, { type:'line', data:{labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],datasets:[{data:[],borderColor:'#7c9e8f'}]}, options:{responsive:true,plugins:{legend:{display:false}}}});
+  if (moodChartInst) { moodChartInst.destroy(); moodChartInst=null; }
+  if (distChartInst) { distChartInst.destroy(); distChartInst=null; }
+  const ctx = document.getElementById("moodChart").getContext("2d");
+  moodChartInst = new Chart(ctx,{ type:"line", data:{labels:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],datasets:[{data:[],borderColor:"#4a9fd4"}]}, options:{responsive:true,plugins:{legend:{display:false}}} });
 }
 
 function renderInsights(moodCount, avgIntensity) {
-  const container = document.getElementById('insights-list');
+  const c = document.getElementById("insights-list");
   const insights = [];
-  const topMood = Object.entries(moodCount).sort((a,b)=>b[1]-a[1])[0]?.[0]||'';
-  if (['Anxious','Overwhelmed','Angry'].includes(topMood)) insights.push({icon:'🌬️',bg:'#e8f4ef',title:'Consider a breathing practice',text:'Your logs show elevated stress moods. Even 3 minutes of deep breathing daily can gently lower your baseline anxiety over time.'});
-  if (['Happy','Peaceful','Grateful'].includes(topMood)) insights.push({icon:'🌸',bg:'#fdf3ee',title:'Beautiful emotional balance',text:'Your recent logs reflect peaceful, positive energy. Nurture what brings you this state — those practices are working.'});
-  if (avgIntensity > 7) insights.push({icon:'💧',bg:'#eef4fc',title:'High intensity feelings detected',text:'You\'ve been experiencing strong emotions. That\'s valid and understandable. Rest, water, and gentle movement can help regulate your system.'});
-  if (state.moodHistory.length >= 3) insights.push({icon:'📈',bg:'#f5f0e8',title:'You\'re building a practice',text:'Consistent self-check-ins are one of the most powerful wellbeing habits. You\'re doing the quiet, important work.'});
-  insights.push({icon:'🌱',bg:'#e8f5ed',title:'Every feeling is information',text:'Emotions are not problems to be solved — they\'re messengers. Listening to them with curiosity rather than judgment changes everything.'});
-  container.innerHTML = insights.map(ins=>`<div class="insight-card"><div class="insight-icon" style="background:${ins.bg}">${ins.icon}</div><div class="insight-body"><h4>${ins.title}</h4><p>${ins.text}</p></div></div>`).join('');
+  const topMood = Object.entries(moodCount).sort((a,b)=>b[1]-a[1])[0]?.[0]||"";
+  if (["Anxious","Overwhelmed","Angry"].includes(topMood))
+    insights.push({ icon:"🌬️", bg:"#e0f0fa", title:"Consider a breathing practice", text:"Your logs show elevated stress moods. Even 3 minutes of deep breathing daily can gently lower your baseline anxiety over time." });
+  if (["Happy","Peaceful","Grateful","Excited","Hopeful"].includes(topMood))
+    insights.push({ icon:"🌸", bg:"#e0f6f1", title:"Beautiful emotional balance", text:"Your recent logs reflect positive, hopeful energy. Nurture what brings you this state — those practices are working." });
+  if (avgIntensity > 7)
+    insights.push({ icon:"💧", bg:"#dceafe", title:"High intensity feelings", text:"You've been experiencing strong emotions. That's valid. Rest, water, and gentle movement can help regulate your system." });
+  if (state.moodHistory.length >= 3)
+    insights.push({ icon:"📈", bg:"#fff8e0", title:"You're building a practice", text:"Consistent self-check-ins are one of the most powerful wellbeing habits. You're doing the quiet, important work." });
+  insights.push({ icon:"🌱", bg:"#e0f6f1", title:"Every feeling is information", text:"Emotions are not problems to be solved — they're messengers. Listening to them with curiosity rather than judgment changes everything." });
+  c.innerHTML = insights.map(ins=>`
+    <div class="insight-card">
+      <div class="insight-icon" style="background:${ins.bg}">${ins.icon}</div>
+      <div class="insight-body"><h4>${ins.title}</h4><p>${ins.text}</p></div>
+    </div>`).join("");
 }
 
-function openLonely() { document.getElementById('lonely-modal').classList.add('show'); }
-function closeLonely() { document.getElementById('lonely-modal').classList.remove('show'); }
+/* ══════════════════════════════════════════════════════════
+   LONELY MODAL
+══════════════════════════════════════════════════════════ */
+function openLonely()  { document.getElementById("lonely-modal").classList.add("show"); }
+function closeLonely() { document.getElementById("lonely-modal").classList.remove("show"); }
 
 function startLonelyChat(type) {
-  closeLonely(); showPage('chat');
-  setTimeout(() => addQuickToChatAndSend(
-    type==='just talk' ? "I feel really alone right now and just need someone to talk to"
-    : type==='help me calm down' ? "I'm struggling and need help calming down"
-    : type==='remind me it will be okay' ? "I'm going through something hard. Can you remind me it will be okay?"
-    : type), 300);
+  closeLonely(); showPage("chat");
+  const map = {
+    "just talk":              "I feel really alone right now and just need someone to talk to",
+    "help me calm down":      "I'm struggling and need help calming down",
+    "remind me it will be okay": "I'm going through something hard. Can you remind me it will be okay?",
+  };
+  setTimeout(() => addQuickToChatAndSend(map[type] || type), 300);
 }
 
-let breathInterval = null, breathStep = 0, breathCountdown = null;
-function startBreathing() { closeLonely(); document.getElementById('breathing-overlay').classList.add('show'); document.body.style.overflow='hidden'; runBreathCycle(); }
-function stopBreathing() { clearTimeout(breathInterval); document.getElementById('breathing-overlay').classList.remove('show'); document.body.style.overflow=''; }
+/* ══════════════════════════════════════════════════════════
+   BREATHING EXERCISE
+══════════════════════════════════════════════════════════ */
+let breathInterval=null, breathStep=0, breathCountdown=null;
+
+function startBreathing() {
+  closeLonely();
+  document.getElementById("breathing-overlay").classList.add("show");
+  document.body.style.overflow = "hidden";
+  breathStep = 0;
+  runBreathCycle();
+}
+
+function stopBreathing() {
+  clearTimeout(breathInterval); clearInterval(breathCountdown);
+  document.getElementById("breathing-overlay").classList.remove("show");
+  document.body.style.overflow = "";
+}
 
 const BREATH_SEQUENCE = [
-  {text:'Breathe in...',duration:4000,class:'inhale'},
-  {text:'Hold gently...',duration:7000,class:'hold'},
-  {text:'Breathe out slowly...',duration:8000,class:'exhale'},
-  {text:'Rest...',duration:2000,class:''},
+  { text:"Breathe in...",        duration:4000, class:"inhale" },
+  { text:"Hold gently...",       duration:7000, class:"hold"   },
+  { text:"Breathe out slowly...",duration:8000, class:"exhale" },
+  { text:"Rest...",              duration:2000, class:""       },
 ];
 
 function runBreathCycle() {
   const step = BREATH_SEQUENCE[breathStep % BREATH_SEQUENCE.length];
-  document.getElementById('breath-circle').className = 'breathing-circle ' + step.class;
-  document.getElementById('breath-text').textContent = step.text;
+  document.getElementById("breath-circle").className = "breathing-circle " + step.class;
+  document.getElementById("breath-text").textContent = step.text;
   let remaining = step.duration / 1000;
-  document.getElementById('breath-count').textContent = Math.ceil(remaining);
+  document.getElementById("breath-count").textContent = Math.ceil(remaining);
   clearInterval(breathCountdown);
-  breathCountdown = setInterval(() => { remaining -= 0.5; document.getElementById('breath-count').textContent = Math.max(0, Math.ceil(remaining)); }, 500);
+  breathCountdown = setInterval(() => {
+    remaining -= 0.5;
+    document.getElementById("breath-count").textContent = Math.max(0, Math.ceil(remaining));
+  }, 500);
   breathInterval = setTimeout(() => { clearInterval(breathCountdown); breathStep++; runBreathCycle(); }, step.duration);
 }
 
-// ─── AI CALLS (all Groq) ─────────────────────────────────────────────
+/* ══════════════════════════════════════════════════════════
+   AI CALLS — GROQ  (multi-mood aware prompts)
+══════════════════════════════════════════════════════════ */
 async function callCompanion(entry) {
+  const moodList = entry.moods.map(m=>`${m.emoji} ${m.label}`).join(", ");
   const sys = `You are Serene, a deeply empathetic, wise, and warm emotional companion. You respond like a calm elder or trusted friend — never robotic, never clinical. Your tone is gentle, present, and human. You never judge. You always guide toward hope, clarity, and calm.
 
-Respond only in valid JSON: { "message": "warm 2-3 sentence empathetic response", "affirmation": "1-2 sentence affirmation or wisdom", "suggestions": ["short action 1","short action 2","short action 3"] }`;
-  const prompt = `The user is feeling ${entry.mood} (intensity ${entry.intensity}/10).${entry.text?` They wrote: "${entry.text}"`:''}`;
-  const text = await groqChat(sys, [{role:'user',content:prompt}], 500);
-  return JSON.parse(text.replace(/```json|```/g,'').trim());
+Respond ONLY in valid JSON: { "message": "warm 2-3 sentence empathetic response", "affirmation": "1-2 sentence affirmation or wisdom", "suggestions": ["short action 1","short action 2","short action 3"] }`;
+  const prompt = `The user is feeling multiple emotions right now: ${moodList} (intensity ${entry.intensity}/10).${entry.text ? ` They shared: "${entry.text}"` : ""} Please acknowledge the complexity of feeling multiple emotions at once.`;
+  const text = await groqChat(sys, [{ role:"user", content:prompt }], 600);
+  return JSON.parse(text.replace(/```json|```/g,"").trim());
 }
 
 async function callCompanionChat(userMessage) {
   const sys = `You are Serene, a deeply empathetic, wise, and human-like emotional companion. You listen with your whole heart. You speak like a calm, caring elder or a deeply understanding friend. Never judge. Validate before advising. Be concise. Guide toward hope and calm. Speak in warm, natural sentences. Never bullet points.
 
-Respond only in valid JSON: { "message": "your warm reply in 2-4 sentences", "type": "normal" or "wisdom" }`;
-  const messages = [...state.chatHistory.slice(-8), {role:'user',content:userMessage}];
+Respond ONLY in valid JSON: { "message": "your warm reply in 2-4 sentences", "type": "normal" }`;
+  const messages = [...state.chatHistory.slice(-8), { role:"user", content:userMessage }];
   const text = await groqChat(sys, messages, 500);
-  return JSON.parse(text.replace(/```json|```/g,'').trim());
+  return JSON.parse(text.replace(/```json|```/g,"").trim());
 }
 
 async function callJournalReflection(journalText) {
-  const sys = `You are Serene. Someone has just written in their private journal. Offer a single, gentle, wise reflection — like a kind elder reading over their shoulder. 2 sentences max. No judgment. No unsolicited advice. Just a warm, insightful mirror of what you noticed. Respond with only the reflection text, no JSON, no quotes.`;
-  return (await groqChat(sys, [{role:'user',content:journalText}], 200)).trim();
+  const sys = `You are Serene. Someone just wrote in their private journal. Offer a single, gentle, wise reflection — like a kind elder reading over their shoulder. 2 sentences max. No judgment. No unsolicited advice. Just warm insight. Respond with only the reflection text, no JSON.`;
+  return (await groqChat(sys, [{ role:"user", content:journalText }], 200)).trim();
 }
 
-// ─── FALLBACKS ────────────────────────────────────────────────────────
+/* ══════════════════════════════════════════════════════════
+   FALLBACKS  (multi-mood aware)
+══════════════════════════════════════════════════════════ */
 function getFallbackCheckinReply(entry) {
-  const r = {
-    Happy:{message:"Your happiness warms this whole space. Hold onto this feeling — let it remind you what's possible.",affirmation:"You deserve every moment of joy that finds you.",suggestions:["Share this feeling with someone you love","Write down what made today good","Sit with the warmth of this moment"]},
-    Sad:{message:"Thank you for trusting me with this. Sadness is not weakness — it's the heart's way of saying something mattered.",affirmation:"You are allowed to feel this. And you are not alone in it.",suggestions:["Be gentle with yourself today","Rest without guilt","Let yourself cry if you need to"]},
-    Anxious:{message:"I hear you. Anxiety is exhausting, and the fact that you checked in shows real self-awareness and courage.",affirmation:"This feeling will pass. You have navigated difficulty before, and you will again.",suggestions:["Try 4-7-8 breathing with me","Step outside for fresh air","Focus only on this one breath"]},
-    Angry:{message:"Your anger is valid. Something matters deeply to you — that's actually a sign of how much you care.",affirmation:"Let the feeling move through you without letting it define you.",suggestions:["Write out what's bothering you","Take a brisk walk","Wait before responding to anything big"]},
-    Peaceful:{message:"This quiet peace you're feeling is precious. You've earned it. Rest in it fully.",affirmation:"Peace is your natural state. It will always return to you.",suggestions:["Meditate or sit in silence","Journal what created this peace","Share your calm with someone who needs it"]},
-    Lonely:{message:"Loneliness is one of the most human of feelings. I want you to know: you are seen, and you matter.",affirmation:"Connection begins with your own compassionate heart. You are worthy of deep belonging.",suggestions:["Reach out to one person today","Write a letter you don't need to send","Do something kind for yourself right now"]},
+  const moods    = entry.moods || [{ label: entry.mood }];
+  const labels   = moods.map(m=>m.label);
+  const isMulti  = moods.length > 1;
+
+  const base = {
+    Happy:       { message:"Your happiness warms this whole space. Hold onto this feeling — let it remind you what's possible.", affirmation:"You deserve every moment of joy that finds you.", suggestions:["Share this feeling with someone you love","Write down what made today good","Sit with the warmth of this moment"] },
+    Sad:         { message:"Thank you for trusting me with this. Sadness is not weakness — it's the heart's way of saying something mattered.", affirmation:"You are allowed to feel this. And you are not alone in it.", suggestions:["Be gentle with yourself today","Rest without guilt","Let yourself cry if you need to"] },
+    Anxious:     { message:"I hear you. Anxiety is exhausting, and the fact that you checked in shows real courage.", affirmation:"This feeling will pass. You have navigated difficulty before.", suggestions:["Try 4-7-8 breathing with me","Step outside for fresh air","Focus only on this one breath"] },
+    Angry:       { message:"Your anger is valid. Something matters deeply to you — that's a sign of how much you care.", affirmation:"Let the feeling move through you without letting it define you.", suggestions:["Write out what's bothering you","Take a brisk walk","Wait before responding to anything big"] },
+    Peaceful:    { message:"This quiet peace is precious. You've earned it. Rest in it fully.", affirmation:"Peace is your natural state. It will always return to you.", suggestions:["Meditate or sit in silence","Journal what created this peace","Share your calm with someone"] },
+    Lonely:      { message:"Loneliness is one of the most human of feelings. You are seen, and you matter.", affirmation:"Connection begins with your own compassionate heart. You are worthy of deep belonging.", suggestions:["Reach out to one person today","Write a letter you don't need to send","Do something kind for yourself"] },
   };
-  return r[entry.mood] || {message:"Whatever you're carrying right now, you don't have to carry it alone. I'm here with you.",affirmation:"You are enough, exactly as you are in this moment.",suggestions:["Take three slow breaths","Have a glass of water","Rest for a few minutes"]};
+
+  if (isMulti) {
+    return {
+      message: `It takes real self-awareness to notice ${moods.length} different emotions at once. Emotions often come in layers, and yours are all valid — every single one. You don't have to resolve the tension between them right now.`,
+      affirmation: "Complexity in your inner world is not confusion — it's depth. You are more whole than you know.",
+      suggestions: ["Sit quietly and breathe with each feeling", "Journal about which emotion feels loudest", "Be patient with yourself — layers take time"],
+    };
+  }
+
+  const primary = labels[0];
+  return base[primary] || { message:"Whatever you're carrying right now, you don't have to carry it alone. I'm here with you.", affirmation:"You are enough, exactly as you are in this moment.", suggestions:["Take three slow breaths","Have a glass of water","Rest for a few minutes"] };
 }
 
 function getFallbackChatReply(text) {
-  const lower = text.toLowerCase();
-  if (lower.includes('alone')||lower.includes('lonely')) return "You reached out — that alone took courage. Loneliness can feel so heavy, but in this moment, you are not alone. I'm right here. Tell me more about what's happening for you.";
-  if (lower.includes('anxious')||lower.includes('worried')||lower.includes('scared')) return "I can hear the worry in your words. Let's slow down together for just a moment. Take one deep breath with me. What is the one thing that's weighing on you most right now?";
-  if (lower.includes('sad')||lower.includes('cry')||lower.includes('hurt')) return "Sadness has a way of making everything feel heavier. I want you to know — your feelings are real, they matter, and they are welcome here. What's been happening?";
-  if (lower.includes('angry')||lower.includes('frustrated')||lower.includes('mad')) return "Anger often points to something we deeply care about or a boundary that was crossed. That makes sense. What happened that brought this up for you?";
-  if (lower.includes('okay')||lower.includes('will it be okay')) return "Yes. I believe this with all my heart: it will be okay. Not because life is easy, but because you are still here, still trying, still reaching out. That means everything.";
+  const l = text.toLowerCase();
+  if (l.includes("alone")||l.includes("lonely")) return "You reached out — that alone took courage. Loneliness can feel so heavy, but in this moment, you are not alone. I'm right here. Tell me more about what's happening for you.";
+  if (l.includes("anxious")||l.includes("worried")||l.includes("scared")) return "I can hear the worry in your words. Let's slow down together. Take one deep breath with me. What is the one thing weighing on you most right now?";
+  if (l.includes("sad")||l.includes("cry")||l.includes("hurt")) return "Sadness makes everything feel heavier. I want you to know — your feelings are real, they matter, and they are welcome here. What's been happening?";
+  if (l.includes("angry")||l.includes("frustrated")||l.includes("mad")) return "Anger often points to something we deeply care about or a boundary that was crossed. That makes sense. What happened that brought this up for you?";
+  if (l.includes("okay")||l.includes("will it be okay")) return "Yes. I believe this with all my heart: it will be okay. Not because life is easy, but because you are still here, still trying, still reaching out. That means everything.";
   return "I hear you, and I'm genuinely glad you're talking to me. Whatever is happening in your heart right now — it matters. Can you tell me a little more?";
 }
 
+/* ══════════════════════════════════════════════════════════
+   UTILITIES
+══════════════════════════════════════════════════════════ */
 function formatTime(iso) {
-  const d = new Date(iso), now = new Date(), diff = now-d;
-  if (diff < 60000) return 'Just now';
-  if (diff < 3600000) return Math.floor(diff/60000)+'m ago';
-  if (diff < 86400000) return Math.floor(diff/3600000)+'h ago';
-  return d.toLocaleDateString('en',{month:'short',day:'numeric'});
+  const d=new Date(iso), now=new Date(), diff=now-d;
+  if(diff<60000) return "Just now";
+  if(diff<3600000) return Math.floor(diff/60000)+"m ago";
+  if(diff<86400000) return Math.floor(diff/3600000)+"h ago";
+  return d.toLocaleDateString("en",{month:"short",day:"numeric"});
 }
 
-function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function escHtml(s) {
+  return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
 
-let toastTimeout = null;
+let toastTimeout=null;
 function showToast(msg) {
-  const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
-  clearTimeout(toastTimeout); toastTimeout = setTimeout(()=>t.classList.remove('show'), 3000);
+  const t=document.getElementById("toast");
+  t.textContent=msg; t.classList.add("show");
+  clearTimeout(toastTimeout);
+  toastTimeout=setTimeout(()=>t.classList.remove("show"),3000);
 }
 
+/* ══════════════════════════════════════════════════════════
+   BOOT
+══════════════════════════════════════════════════════════ */
 loadState();
-document.getElementById('lonely-modal').addEventListener('click', function(e) { if (e.target===this) closeLonely(); });
+
+document.getElementById("lonely-modal").addEventListener("click", function(e) { if(e.target===this) closeLonely(); });
+
+// Slider fill on load
+document.getElementById("intensity-slider").addEventListener("input", function() { updateSliderFill(this); });
 </script>
 </body>
 </html>
